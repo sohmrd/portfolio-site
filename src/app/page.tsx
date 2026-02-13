@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useMotionValue, useSpring, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { getFeaturedProjects } from "@/content/projects";
@@ -30,13 +30,40 @@ function ProjectShowcase({
   });
   const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "8%"]);
 
+  const prefersReduced = useReducedMotion();
+  const mouseX = useMotionValue(0.5);
+  const mouseY = useMotionValue(0.5);
+  const tiltSpring = { stiffness: 200, damping: 30 };
+  const rawRotateX = useTransform(mouseY, [0, 1], [3, -3]);
+  const rawRotateY = useTransform(mouseX, [0, 1], [-3, 3]);
+  const rotateX = useSpring(rawRotateX, tiltSpring);
+  const rotateY = useSpring(rawRotateY, tiltSpring);
+
+  const handleTiltMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current || prefersReduced || isComingSoon) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    mouseX.set((e.clientX - rect.left) / rect.width);
+    mouseY.set((e.clientY - rect.top) / rect.height);
+  };
+  const handleTiltLeave = () => {
+    mouseX.set(0.5);
+    mouseY.set(0.5);
+  };
+
   const content = (
     <motion.div
       ref={cardRef}
+      onMouseMove={handleTiltMove}
+      onMouseLeave={handleTiltLeave}
       initial={{ opacity: 0, y: 60 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.9, ease }}
+      style={
+        prefersReduced || isComingSoon
+          ? undefined
+          : { rotateX, rotateY, transformStyle: "preserve-3d" }
+      }
       className={`group ${isComingSoon ? "pointer-events-none" : ""}`}
     >
       {/* Image */}
@@ -113,9 +140,11 @@ function ProjectShowcase({
   if (isComingSoon) return <div>{content}</div>;
 
   return (
-    <Link href={`/work/${project.slug}`} className="block">
-      {content}
-    </Link>
+    <div style={{ perspective: 1200 }}>
+      <Link href={`/work/${project.slug}`} className="block">
+        {content}
+      </Link>
+    </div>
   );
 }
 
