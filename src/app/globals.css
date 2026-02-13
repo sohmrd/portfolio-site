@@ -18,90 +18,90 @@
   --font-display: "Satoshi", var(--font-inter), system-ui, sans-serif;
 }
 
-:root {
-  --background: hsl(220 15% 5%);
-  --surface: hsl(220 12% 9%);
-  --surface-hover: hsl(220 12% 13%);
-  --border-color: hsl(220 8% 15%);
-  --text: hsl(0 0% 96%);
-  --text-muted: hsl(220 5% 58%);
-  --text-subtle: hsl(220 5% 35%);
-  --accent: hsl(190 80% 55%);
-  --accent-hover: hsl(190 80% 65%);
-  --accent-muted: hsl(190 30% 15%);
+@layer base {
+  :root {
+    --background: hsl(220 15% 5%);
+    --surface: hsl(220 12% 9%);
+    --surface-hover: hsl(220 12% 13%);
+    --border-color: hsl(220 8% 15%);
+    --text: hsl(0 0% 96%);
+    --text-muted: hsl(220 5% 58%);
+    --text-subtle: hsl(220 5% 35%);
+    --accent: hsl(190 80% 55%);
+    --accent-hover: hsl(190 80% 65%);
+    --accent-muted: hsl(190 30% 15%);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+  }
+
+  body {
+    background: var(--background);
+    color: var(--text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  /* Film grain overlay */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+  }
+
+  ::selection {
+    background: hsl(190 80% 55% / 0.2);
+    color: var(--accent);
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(220 8% 20%);
+    border-radius: 2px;
+  }
+
+  /* Code blocks */
+  pre {
+    background: hsl(220 15% 7%) !important;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow-x: auto;
+  }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.7;
+  }
+
+  /* Smooth image loading */
+  img {
+    transition: opacity 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  scroll-behavior: smooth;
-  font-size: 16px;
-}
-
-body {
-  background: var(--background);
-  color: var(--text);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
-}
-
-/* Film grain overlay */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  pointer-events: none;
-  opacity: 0.03;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-size: 256px 256px;
-}
-
-::selection {
-  background: hsl(190 80% 55% / 0.2);
-  color: var(--accent);
-}
-
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 4px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: hsl(220 8% 20%);
-  border-radius: 2px;
-}
-
-/* Premium code blocks */
-pre {
-  background: hsl(220 15% 7%) !important;
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  overflow-x: auto;
-}
-
-code {
-  font-family: var(--font-mono);
-  font-size: 0.8125rem;
-  line-height: 1.7;
-}
-
-/* Smooth image loading */
-img {
-  transition: opacity 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-
-/* Line animation utility */
-.line-reveal {
+/* Utilities that need to coexist with Tailwind */
+@utility line-reveal {
   clip-path: inset(0 100% 0 0);
   animation: lineReveal 0.8s cubic-bezier(0.77, 0, 0.175, 1) forwards;
 }
@@ -112,8 +112,7 @@ img {
   }
 }
 
-/* Horizontal rule styling */
-.divider {
+@utility divider {
   height: 1px;
   background: linear-gradient(
     90deg,
