@@ -98,18 +98,16 @@ export function DotGrid({ className }: DotGridProps) {
 
     const handleMouse = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
-      mouseRef.current.x = e.clientX - rect.left;
-      mouseRef.current.y = e.clientY - rect.top;
-      mouseRef.current.active = true;
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const inside =
+        x >= 0 && x <= rect.width && y >= 0 && y <= rect.height;
+      mouseRef.current.x = x;
+      mouseRef.current.y = y;
+      mouseRef.current.active = inside;
     };
 
-    const handleLeave = () => {
-      mouseRef.current.active = false;
-    };
-
-    const parent = canvas.parentElement;
-    parent?.addEventListener("mousemove", handleMouse, { passive: true });
-    parent?.addEventListener("mouseleave", handleLeave);
+    window.addEventListener("mousemove", handleMouse, { passive: true });
 
     if (prefersReduced) {
       // Draw static grid once
@@ -128,8 +126,7 @@ export function DotGrid({ className }: DotGridProps) {
       return () => {
         ro.disconnect();
         mq.removeEventListener("change", onThemeChange);
-        parent?.removeEventListener("mousemove", handleMouse);
-        parent?.removeEventListener("mouseleave", handleLeave);
+        window.removeEventListener("mousemove", handleMouse);
       };
     }
 
@@ -252,13 +249,12 @@ export function DotGrid({ className }: DotGridProps) {
       cancelAnimationFrame(rafRef.current);
       ro.disconnect();
       mq.removeEventListener("change", onThemeChange);
-      parent?.removeEventListener("mousemove", handleMouse);
-      parent?.removeEventListener("mouseleave", handleLeave);
+      window.removeEventListener("mousemove", handleMouse);
     };
   }, [prefersReduced, initDots, readColors]);
 
   return (
-    <div className={`absolute inset-0 pointer-events-auto ${className || ""}`}>
+    <div className={`absolute inset-0 pointer-events-none ${className || ""}`}>
       <canvas
         ref={canvasRef}
         className="absolute inset-0"
