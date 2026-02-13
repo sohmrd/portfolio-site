@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 
 const ease = [0.25, 0.1, 0.25, 1] as const;
 
@@ -42,13 +42,16 @@ export function TextReveal({
   delay?: number;
   className?: string;
 }) {
+  const [done, setDone] = useState(false);
+
   return (
-    <div className={`overflow-hidden pb-[0.3em] -mb-[0.3em] ${className || ""}`}>
+    <div className={`${done ? "" : "overflow-hidden"} ${className || ""}`}>
       <motion.div
         initial={{ y: "100%" }}
         whileInView={{ y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8, delay, ease: [0.77, 0, 0.175, 1] }}
+        onAnimationComplete={() => setDone(true)}
       >
         {children}
       </motion.div>
