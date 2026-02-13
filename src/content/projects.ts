@@ -41,9 +41,9 @@ export const projects: Project[] = [
     thumbnail: "/images/ddv/poster.jpg",
     tags: ["IoT", "Swift", "Arduino", "CAD", "Prototyping", "BLE"],
     summary:
-      "I led firmware development and iOS app design for a Bluetooth-connected water bottle that mixes up to four flavors at user-controlled intensities. Built for Coca-Cola as an interdisciplinary senior capstone at Georgia Tech.",
+      "I designed the bottle's form factor and mechanical internals, wrote the Arduino firmware, and built the iOS companion app. Two parallel designs: one electronic, one fully mechanical. Built for Coca-Cola as an interdisciplinary senior capstone at Georgia Tech.",
     timeline: "2025",
-    role: "Firmware Lead & iOS Developer",
+    role: "Product Designer, Mechanical CAD, Firmware Lead, iOS Developer",
     duration: "8 months",
     tools: [
       "SolidWorks",
@@ -67,14 +67,14 @@ export const projects: Project[] = [
         heading: "The Product",
         type: "standard",
         content:
-          "We designed the Omni Water Bottle: a double-walled insulated bottle with a hexagonal cap that houses up to four removable flavor cartridges. Each cartridge connects to a dedicated piezo-electric micro pump inside the cap. When the user takes a sip, the pumps inject precise doses of flavor concentrate into the water stream through a central straw, so the main reservoir always stays as clean water. The hexagonal cap form factor was chosen because it fits standard 2.8-inch cup holders while maximizing internal space for four cartridges arranged around a central channel.",
+          "I led the product design for the Omni Water Bottle, shaping both the form factor and the internal architecture. Working with one mechanical engineer, I CAD'd two parallel designs in SolidWorks: an electronic version with Bluetooth-controlled piezo pumps, and a fully mechanical version using manual pressure valves as a low-cost fallback. Both share the same hexagonal cap housing up to four removable flavor cartridges around a central straw. The cap fits standard 2.8-inch cup holders while maximizing internal cartridge space. When the user sips, pumps inject precise doses of flavor concentrate into the water stream, so the main reservoir always stays as clean water.",
         images: ["/images/ddv/product.jpg"],
       },
       {
         heading: "The System",
         type: "stack",
         content:
-          "The Omni Bottle is three systems working together: a mechanical assembly designed in SolidWorks, embedded firmware running on an Arduino Nano 33 BLE, and a native iOS companion app. They communicate over Bluetooth Low Energy using a custom protocol with 14 characteristics across two services.",
+          "I worked across all three layers of the system: the mechanical assembly I co-designed in SolidWorks, the embedded firmware I wrote for the Arduino Nano 33 BLE, and the native iOS companion app I built in SwiftUI. The hardware and software communicate over Bluetooth Low Energy using a custom protocol with 14 characteristics across two services.",
         hardware: [
           "4x Piezo-electric micro pumps (one per flavor channel)",
           "Arduino Nano 33 BLE (main controller)",
@@ -107,7 +107,7 @@ export const projects: Project[] = [
             version: "v2: Seal Failures",
             issue:
               "With pumps working, flavor began leaking between the cartridge housing and cap during normal use. The O-ring seals we selected deformed after repeated insertions and temperature changes.",
-            fix: "Designed a rolling pinch valve mechanism in SolidWorks that physically pinches the tubing shut when pumps are off. Took three tolerance iterations to get the valve geometry right for reliable sealing.",
+            fix: "I designed a rolling pinch valve mechanism in SolidWorks that physically pinches the tubing shut when pumps are off. Took three tolerance iterations between me and our ME to get the valve geometry right for reliable sealing.",
           },
           {
             version: "v3: Power Delivery",
