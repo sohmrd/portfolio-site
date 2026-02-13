@@ -3,7 +3,6 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
-import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -29,45 +28,23 @@ export const metadata: Metadata = {
   },
 };
 
-// Inline script to prevent flash of wrong theme
-const themeScript = `
-(function() {
-  try {
-    var theme = localStorage.getItem('theme');
-    if (theme === 'light') {
-      document.documentElement.classList.add('light');
-      document.documentElement.classList.remove('dark');
-    } else if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-      document.documentElement.classList.remove('light');
-    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-      document.documentElement.classList.add('light');
-      document.documentElement.classList.remove('dark');
-    }
-  } catch (e) {}
-})();
-`;
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en">
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <link
           href="https://api.fontshare.com/v2/css?f[]=satoshi@500,600,700&display=swap"
           rel="stylesheet"
         />
       </head>
       <body className={`${inter.variable} ${jetbrainsMono.variable}`}>
-        <ThemeProvider>
-          <Navigation />
-          <main>{children}</main>
-          <Footer />
-        </ThemeProvider>
+        <Navigation />
+        <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );

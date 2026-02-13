@@ -91,12 +91,10 @@ export function DotGrid({ className }: DotGridProps) {
     const ro = new ResizeObserver(() => resize());
     ro.observe(canvas.parentElement!);
 
-    // Theme observer
-    const mo = new MutationObserver(() => readColors());
-    mo.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class"],
-    });
+    // Theme observer — follows system preference
+    const mq = window.matchMedia("(prefers-color-scheme: light)");
+    const onThemeChange = () => readColors();
+    mq.addEventListener("change", onThemeChange);
 
     const handleMouse = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
@@ -129,7 +127,7 @@ export function DotGrid({ className }: DotGridProps) {
 
       return () => {
         ro.disconnect();
-        mo.disconnect();
+        mq.removeEventListener("change", onThemeChange);
         parent?.removeEventListener("mousemove", handleMouse);
         parent?.removeEventListener("mouseleave", handleLeave);
       };
@@ -253,7 +251,7 @@ export function DotGrid({ className }: DotGridProps) {
     return () => {
       cancelAnimationFrame(rafRef.current);
       ro.disconnect();
-      mo.disconnect();
+      mq.removeEventListener("change", onThemeChange);
       parent?.removeEventListener("mousemove", handleMouse);
       parent?.removeEventListener("mouseleave", handleLeave);
     };

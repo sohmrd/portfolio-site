@@ -37,8 +37,9 @@
     color-scheme: dark;
   }
 
-  /* Light mode */
-  html.light {
+  /* Light mode — follows system preference */
+  @media (prefers-color-scheme: light) {
+  :root {
     --background: hsl(0 0% 98%);
     --surface: hsl(0 0% 100%);
     --surface-hover: hsl(0 0% 95%);
@@ -53,6 +54,7 @@
     --grain-opacity: 0.015;
     --scrollbar-thumb: hsl(0 0% 80%);
     color-scheme: light;
+  }
   }
 
   * {
