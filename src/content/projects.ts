@@ -38,7 +38,7 @@ export const projects: Project[] = [
     title: "Dynamic Drinking Vessel",
     description:
       "A Bluetooth-connected water bottle that mixes custom flavors on demand, built for Coca-Cola.",
-    thumbnail: "/images/ddv/hero.jpg",
+    thumbnail: "/images/ddv/product.jpg",
     tags: ["IoT", "Swift", "Arduino", "CAD", "Prototyping", "BLE"],
     summary:
       "I led firmware development and iOS app design for a smart water bottle that uses piezo-electric pumps to mix four flavors at user-defined intensities. Built in partnership with Coca-Cola as a senior capstone.",
@@ -54,7 +54,7 @@ export const projects: Project[] = [
       "InDesign",
     ],
     team: "6 students (Industrial Design, Mechanical Engineering, Electrical & Computer Engineering)",
-    heroImage: "/images/ddv/hero.jpg",
+    heroImage: "/images/ddv/product.jpg",
     sections: [
       {
         heading: "The Challenge",
@@ -84,7 +84,7 @@ export const projects: Project[] = [
           "SolidWorks 2024",
           "InDesign (expo poster)",
         ],
-        images: ["/images/ddv/electronics.jpg"],
+        images: ["/images/ddv/electronics.jpg", "/images/ddv/mechanical.jpg"],
       },
       {
         heading: "The Logic: Firmware",
@@ -119,6 +119,7 @@ int pumpSpeed(long intensity) {
         content:
           "The iOS app connects to the bottle over CoreBluetooth. On connection, it discovers two BLE services (flavor control + mode control) with 14 characteristics total. It syncs the current flavor values from the Arduino, then writes updates in real time as the user adjusts sliders.",
         language: "Swift",
+        images: ["/images/ddv/app.png"],
         code: `class BLEManager: NSObject, ObservableObject {
   @Published var isConnected = false
   @Published var syncedFlavorValues: [UInt8]? = nil
@@ -193,7 +194,7 @@ int pumpSpeed(long intensity) {
         type: "standard",
         content:
           "We delivered a working prototype demonstrated to Coca-Cola engineers at the Georgia Tech Capstone Expo. The Omni Bottle mixes up to 4 flavors with individually adjustable intensity (16+ combinations), controlled via iOS app or automatic tilt-to-dispense. The bottle keeps the main reservoir as clean water only, with flavor cartridges that are easy to swap and refill. Our team produced a complete technical binder, fabrication package, and branded expo poster.",
-        images: ["/images/ddv/team.jpg"],
+        images: ["/images/ddv/product.jpg", "/images/ddv/team.jpg"],
       },
     ],
     tier: 1,
