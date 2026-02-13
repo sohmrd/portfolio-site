@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getProject, projects } from "@/content/projects";
+import { getProject, getNextProject, projects } from "@/content/projects";
 import { CaseStudyContent } from "./content";
 
 interface PageProps {
@@ -30,5 +30,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
     notFound();
   }
 
-  return <CaseStudyContent project={project} />;
+  const nextProject = getNextProject(slug);
+
+  return <CaseStudyContent project={project} nextProject={nextProject} />;
 }

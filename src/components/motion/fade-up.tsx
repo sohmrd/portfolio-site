@@ -16,7 +16,7 @@ export function FadeUp({
   children,
   delay = 0,
   className,
-  distance = 40,
+  distance = 50,
 }: FadeUpProps) {
   const prefersReduced = useReducedMotion();
 
@@ -24,7 +24,7 @@ export function FadeUp({
     <motion.div
       initial={prefersReduced ? {} : { opacity: 0, y: distance }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
+      viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.8, delay, ease }}
       className={className}
     >

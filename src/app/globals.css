@@ -21,38 +21,46 @@
 @layer base {
   /* Dark mode (default) */
   :root {
-    --background: hsl(220 15% 5%);
-    --surface: hsl(220 12% 9%);
-    --surface-hover: hsl(220 12% 13%);
-    --border-color: hsl(220 8% 15%);
-    --text: hsl(0 0% 96%);
+    --background: hsl(220 15% 4%);
+    --surface: hsl(220 12% 7%);
+    --surface-hover: hsl(220 12% 11%);
+    --border-color: hsl(220 8% 12%);
+    --text: hsl(0 0% 97%);
     --text-muted: hsl(220 5% 58%);
     --text-subtle: hsl(220 5% 35%);
-    --accent: hsl(190 80% 55%);
-    --accent-hover: hsl(190 80% 65%);
-    --accent-muted: hsl(190 30% 15%);
-    --code-bg: hsl(220 15% 7%);
+    --accent: hsl(185 85% 55%);
+    --accent-hover: hsl(185 85% 65%);
+    --accent-muted: hsl(185 35% 12%);
+    --code-bg: hsl(220 18% 5%);
+    --code-text: hsl(185 30% 70%);
+    --code-border: hsl(220 8% 12%);
+    --code-subtle: hsl(220 5% 35%);
     --grain-opacity: 0.03;
     --scrollbar-thumb: hsl(220 8% 20%);
+    --container-max: 1440px;
+    --container-padding-x: clamp(24px, 4vw, 64px);
     color-scheme: dark;
   }
 
   /* Light mode — follows system preference */
   @media (prefers-color-scheme: light) {
   :root {
-    --background: hsl(0 0% 98%);
+    --background: hsl(40 20% 97%);
     --surface: hsl(0 0% 100%);
-    --surface-hover: hsl(0 0% 95%);
-    --border-color: hsl(0 0% 88%);
+    --surface-hover: hsl(40 10% 94%);
+    --border-color: hsl(220 10% 85%);
     --text: hsl(220 15% 10%);
-    --text-muted: hsl(220 5% 45%);
-    --text-subtle: hsl(220 5% 65%);
-    --accent: hsl(190 80% 38%);
-    --accent-hover: hsl(190 80% 32%);
-    --accent-muted: hsl(190 40% 92%);
-    --code-bg: hsl(220 15% 7%);
+    --text-muted: hsl(220 8% 33%);
+    --text-subtle: hsl(220 5% 46%);
+    --accent: hsl(185 85% 32%);
+    --accent-hover: hsl(185 85% 25%);
+    --accent-muted: hsl(185 40% 92%);
+    --code-bg: hsl(220 18% 5%);
+    --code-text: hsl(185 30% 70%);
+    --code-border: hsl(220 10% 16%);
+    --code-subtle: hsl(220 5% 45%);
     --grain-opacity: 0.015;
-    --scrollbar-thumb: hsl(0 0% 80%);
+    --scrollbar-thumb: hsl(0 0% 75%);
     color-scheme: light;
   }
   }
@@ -90,26 +98,30 @@
   }
 
   ::selection {
-    background: hsl(190 80% 55% / 0.2);
+    background: hsl(185 85% 55% / 0.2);
     color: var(--accent);
   }
 
   /* Scrollbar */
   ::-webkit-scrollbar {
-    width: 4px;
+    width: 6px;
   }
   ::-webkit-scrollbar-track {
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
     background: var(--scrollbar-thumb);
-    border-radius: 2px;
+    border-radius: 3px;
+    transition: background 0.2s;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
   }
 
   /* Code blocks — always dark */
   pre {
     background: var(--code-bg) !important;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--code-border);
     border-radius: 12px;
     overflow-x: auto;
   }

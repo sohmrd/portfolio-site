@@ -1,13 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { getFeaturedProjects } from "@/content/projects";
 import {
   FadeUp,
   TextReveal,
-  ScaleIn,
 } from "@/components/motion/fade-up";
 import { DotGrid } from "@/components/interactive/dot-grid";
 import { TiltCard } from "@/components/interactive/tilt-card";
@@ -23,9 +23,16 @@ function ProjectShowcase({
   index: number;
 }) {
   const isComingSoon = !project.visible;
+  const cardRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: cardRef,
+    offset: ["start end", "end start"],
+  });
+  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "8%"]);
 
   const content = (
     <motion.div
+      ref={cardRef}
       initial={{ opacity: 0, y: 60 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
@@ -33,20 +40,23 @@ function ProjectShowcase({
       className={`group ${isComingSoon ? "pointer-events-none" : ""}`}
     >
       {/* Image */}
-      <div className="relative overflow-hidden rounded-2xl bg-[var(--surface)]">
-        <div className="relative aspect-[16/9] overflow-hidden md:aspect-[2/1]">
+      <div className="relative overflow-hidden rounded-2xl bg-[var(--surface)] transition-shadow duration-500 group-hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)]">
+        <div className="relative aspect-[16/9] overflow-hidden lg:aspect-[21/9]">
           {project.thumbnail && !isComingSoon ? (
-            <Image
-              src={project.thumbnail}
-              alt={project.title}
-              fill
-              className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-              sizes="(max-width: 768px) 100vw, 90vw"
-            />
+            <motion.div className="absolute inset-[-8%]" style={{ y: imageY }}>
+              <Image
+                src={project.thumbnail}
+                alt={project.title}
+                fill
+                className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                sizes="(max-width: 768px) 100vw, 90vw"
+              />
+            </motion.div>
           ) : (
-            <div className="flex h-full items-center justify-center bg-[var(--surface)]">
+            <div className="flex h-full items-center justify-center border border-[var(--border-color)] rounded-2xl bg-[var(--surface)]">
               <div className="text-center">
-                <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-[var(--text-subtle)]">
+                <div className="mx-auto mb-3 h-8 w-8 rounded-full border-2 border-[var(--border-color)]" />
+                <span className="font-mono text-[11px] uppercase tracking-[0.3em] text-[var(--text-muted)]">
                   Coming Soon
                 </span>
               </div>
@@ -68,7 +78,7 @@ function ProjectShowcase({
               {String(index + 1).padStart(2, "0")}
             </span>
             <h3
-              className={`font-[family-name:var(--font-display)] text-2xl font-bold tracking-tight md:text-3xl ${
+              className={`font-[family-name:var(--font-display)] text-2xl font-bold tracking-tight md:text-4xl ${
                 isComingSoon
                   ? "text-[var(--text-subtle)]"
                   : "text-[var(--text)] group-hover:text-[var(--accent)] transition-colors duration-300"
@@ -100,7 +110,7 @@ function ProjectShowcase({
     </motion.div>
   );
 
-  if (isComingSoon) return <div className="opacity-40">{content}</div>;
+  if (isComingSoon) return <div>{content}</div>;
 
   return (
     <Link href={`/work/${project.slug}`} className="block">
@@ -110,14 +120,28 @@ function ProjectShowcase({
 }
 
 export default function Home() {
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress: heroProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+  const heroOpacity = useTransform(heroProgress, [0, 0.7], [1, 0]);
+  const heroY = useTransform(heroProgress, [0, 0.7], ["0px", "-80px"]);
+
   return (
     <>
       {/* Hero — Full viewport, massive typography */}
-      <section className="relative flex min-h-screen flex-col justify-end px-6 pb-24 pt-40 lg:px-12 lg:pb-32">
+      <section
+        ref={heroRef}
+        className="relative flex min-h-screen flex-col justify-end px-6 pb-32 pt-40 lg:px-12 lg:pb-40"
+      >
         {/* Interactive dot grid background */}
         <DotGrid />
 
-        <div className="relative mx-auto w-full max-w-[1400px]">
+        <motion.div
+          style={{ opacity: heroOpacity, y: heroY }}
+          className="relative mx-auto w-full max-w-[var(--container-max)]"
+        >
           {/* Eyebrow */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -134,17 +158,17 @@ export default function Home() {
           {/* Main headline — big, bold, split across lines */}
           <div className="mt-8">
             <TextReveal delay={0.3}>
-              <h1 className="font-[family-name:var(--font-display)] text-[clamp(2.5rem,8vw,6.5rem)] font-bold leading-[0.95] tracking-[-0.03em] text-[var(--text)]">
+              <h1 className="font-[family-name:var(--font-display)] text-[clamp(3rem,10vw,9rem)] font-bold leading-[0.9] tracking-[-0.04em] text-[var(--text)]">
                 I design products
               </h1>
             </TextReveal>
             <TextReveal delay={0.45}>
-              <h1 className="font-[family-name:var(--font-display)] text-[clamp(2.5rem,8vw,6.5rem)] font-bold leading-[0.95] tracking-[-0.03em] text-[var(--text)]">
+              <h1 className="font-[family-name:var(--font-display)] text-[clamp(3rem,10vw,9rem)] font-bold leading-[0.9] tracking-[-0.04em] text-[var(--text)]">
                 and write the code
               </h1>
             </TextReveal>
             <TextReveal delay={0.6}>
-              <h1 className="font-[family-name:var(--font-display)] text-[clamp(2.5rem,8vw,6.5rem)] font-bold leading-[0.95] tracking-[-0.03em] text-[var(--text-muted)]">
+              <h1 className="font-[family-name:var(--font-display)] text-[clamp(3rem,10vw,9rem)] font-bold leading-[0.9] tracking-[-0.04em] text-[var(--text-muted)]">
                 that powers them.
               </h1>
             </TextReveal>
@@ -155,7 +179,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1 }}
-            className="mt-12 flex flex-col gap-8 md:flex-row md:items-end md:justify-between"
+            className="mt-16 flex flex-col gap-8 md:flex-row md:items-end md:justify-between"
           >
             <p className="max-w-md text-base leading-relaxed text-[var(--text-muted)]">
               Georgia Tech senior in Industrial Design + Computer Science.
@@ -180,7 +204,7 @@ export default function Home() {
               </a>
             </div>
           </motion.div>
-        </div>
+        </motion.div>
 
         {/* Bottom divider */}
         <motion.div
@@ -193,16 +217,16 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* Work — Large showcase cards, not a grid */}
-      <section id="work" className="px-6 pb-32 pt-24 lg:px-12 lg:pb-48 lg:pt-32">
-        <div className="mx-auto max-w-[1400px]">
+      {/* Work — Large showcase cards */}
+      <section id="work" className="scroll-mt-24 px-6 pb-40 pt-32 lg:px-12 lg:pb-60 lg:pt-48">
+        <div className="mx-auto max-w-[var(--container-max)]">
           <FadeUp>
             <div className="flex items-end justify-between">
               <div>
                 <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-[var(--text-subtle)]">
                   Selected Work
                 </span>
-                <h2 className="mt-3 font-[family-name:var(--font-display)] text-4xl font-bold tracking-tight text-[var(--text)] md:text-5xl">
+                <h2 className="mt-3 font-[family-name:var(--font-display)] text-5xl font-bold tracking-tight text-[var(--text)] md:text-6xl lg:text-7xl">
                   Projects
                 </h2>
               </div>
@@ -213,7 +237,7 @@ export default function Home() {
             <div className="divider mt-8" />
           </FadeUp>
 
-          <div className="mt-16 space-y-20 md:mt-20 md:space-y-28">
+          <div className="mt-20 space-y-28 md:mt-24 md:space-y-40">
             {projects.map((project, i) => (
               <ProjectShowcase key={project.slug} project={project} index={i} />
             ))}
@@ -222,8 +246,8 @@ export default function Home() {
       </section>
 
       {/* About Preview — Asymmetric, editorial layout */}
-      <section className="px-6 py-32 lg:px-12 lg:py-48">
-        <div className="mx-auto max-w-[1400px]">
+      <section id="about" className="scroll-mt-24 px-6 py-40 lg:px-12 lg:py-56">
+        <div className="mx-auto max-w-[var(--container-max)]">
           <div className="grid gap-16 md:grid-cols-12 md:gap-8">
             {/* Left column — large heading */}
             <div className="md:col-span-5">
@@ -231,7 +255,7 @@ export default function Home() {
                 <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-[var(--text-subtle)]">
                   About
                 </span>
-                <h2 className="mt-6 font-[family-name:var(--font-display)] text-4xl font-bold leading-[1.1] tracking-tight text-[var(--text)] md:text-5xl lg:text-6xl">
+                <h2 className="mt-6 font-[family-name:var(--font-display)] text-5xl font-bold leading-[1.1] tracking-tight text-[var(--text)] md:text-6xl lg:text-7xl">
                   Design-trained
                   <br />
                   engineer.
@@ -294,17 +318,17 @@ export default function Home() {
       </section>
 
       {/* Contact — Massive typography CTA */}
-      <section className="px-6 py-32 lg:px-12 lg:py-48">
-        <div className="mx-auto max-w-[1400px]">
+      <section id="contact" className="scroll-mt-24 px-6 py-40 lg:px-12 lg:py-56">
+        <div className="mx-auto max-w-[var(--container-max)]">
           <div className="divider" />
-          <div className="py-24 text-center md:py-32">
+          <div className="py-28 text-center md:py-36">
             <FadeUp>
               <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-[var(--text-subtle)]">
                 Get in touch
               </span>
             </FadeUp>
             <FadeUp delay={0.1}>
-              <h2 className="mx-auto mt-8 max-w-3xl font-[family-name:var(--font-display)] text-4xl font-bold tracking-tight text-[var(--text)] md:text-6xl lg:text-7xl">
+              <h2 className="mx-auto mt-8 max-w-3xl font-[family-name:var(--font-display)] text-5xl font-bold tracking-tight text-[var(--text)] md:text-7xl lg:text-8xl">
                 Let&apos;s build something together.
               </h2>
             </FadeUp>

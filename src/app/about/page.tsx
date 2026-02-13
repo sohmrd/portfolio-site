@@ -50,7 +50,7 @@ export default function AboutPage() {
     <>
       {/* Hero */}
       <section className="relative flex min-h-[70vh] flex-col justify-end px-6 pb-20 pt-40 lg:px-12 lg:pb-28">
-        <div className="mx-auto w-full max-w-[1400px]">
+        <div className="mx-auto w-full max-w-[var(--container-max)]">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -65,12 +65,12 @@ export default function AboutPage() {
 
           <div className="mt-8">
             <TextReveal delay={0.3}>
-              <h1 className="max-w-4xl font-[family-name:var(--font-display)] text-[clamp(2.5rem,6vw,5rem)] font-bold leading-[0.95] tracking-[-0.02em] text-[var(--text)]">
+              <h1 className="max-w-4xl font-[family-name:var(--font-display)] text-[clamp(2.5rem,8vw,7rem)] font-bold leading-[0.9] tracking-[-0.03em] text-[var(--text)]">
                 I think in sketches
               </h1>
             </TextReveal>
             <TextReveal delay={0.45}>
-              <h1 className="max-w-4xl font-[family-name:var(--font-display)] text-[clamp(2.5rem,6vw,5rem)] font-bold leading-[0.95] tracking-[-0.02em] text-[var(--text-muted)]">
+              <h1 className="max-w-4xl font-[family-name:var(--font-display)] text-[clamp(2.5rem,8vw,7rem)] font-bold leading-[0.9] tracking-[-0.03em] text-[var(--text-muted)]">
                 and ship in code.
               </h1>
             </TextReveal>
@@ -110,8 +110,8 @@ export default function AboutPage() {
       </section>
 
       {/* Education + Objective */}
-      <section className="px-6 py-24 lg:px-12 lg:py-32">
-        <div className="mx-auto max-w-[1400px]">
+      <section className="px-6 py-32 lg:px-12 lg:py-40">
+        <div className="mx-auto max-w-[var(--container-max)]">
           <div className="grid gap-16 md:grid-cols-12 md:gap-8">
             <div className="md:col-span-4">
               <FadeUp>
@@ -150,8 +150,8 @@ export default function AboutPage() {
       </section>
 
       {/* Experience */}
-      <section className="px-6 py-24 lg:px-12 lg:py-32">
-        <div className="mx-auto max-w-[1400px]">
+      <section className="px-6 py-32 lg:px-12 lg:py-40">
+        <div className="mx-auto max-w-[var(--container-max)]">
           <FadeUp>
             <div className="flex items-end justify-between">
               <div>
@@ -196,8 +196,8 @@ export default function AboutPage() {
       </section>
 
       {/* Skills */}
-      <section className="px-6 py-24 lg:px-12 lg:py-32">
-        <div className="mx-auto max-w-[1400px]">
+      <section className="px-6 py-32 lg:px-12 lg:py-40">
+        <div className="mx-auto max-w-[var(--container-max)]">
           <FadeUp>
             <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-[var(--text-subtle)]">
               Capabilities
@@ -235,7 +235,7 @@ export default function AboutPage() {
 
       {/* CTA */}
       <section className="px-6 py-32 lg:px-12 lg:py-48">
-        <div className="mx-auto max-w-[1400px]">
+        <div className="mx-auto max-w-[var(--container-max)]">
           <div className="divider" />
           <div className="py-24 text-center md:py-32">
             <FadeUp>
