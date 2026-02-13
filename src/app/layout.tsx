@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
+import { LightboxProvider } from "@/components/ui/lightbox";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -42,9 +43,11 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.variable} ${jetbrainsMono.variable}`}>
-        <Navigation />
-        <main>{children}</main>
-        <Footer />
+        <LightboxProvider>
+          <Navigation />
+          <main>{children}</main>
+          <Footer />
+        </LightboxProvider>
       </body>
     </html>
   );

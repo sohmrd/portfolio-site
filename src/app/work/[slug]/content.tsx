@@ -5,6 +5,37 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Project, Section } from "@/content/projects";
 import { FadeUp, TextReveal, ScaleIn } from "@/components/motion/fade-up";
+import { openLightbox } from "@/components/ui/lightbox";
+
+function ClickableImage({
+  src,
+  alt,
+  fill,
+  className,
+  sizes,
+}: {
+  src: string;
+  alt: string;
+  fill?: boolean;
+  className?: string;
+  sizes?: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => openLightbox(src, alt)}
+      className="relative block h-full w-full cursor-zoom-in"
+      aria-label={`View full image: ${alt}`}
+    >
+      {fill ? (
+        <Image src={src} alt={alt} fill className={className} sizes={sizes} />
+      ) : (
+        /* eslint-disable-next-line @next/next/no-img-element */
+        <img src={src} alt={alt} className={className} />
+      )}
+    </button>
+  );
+}
 
 function SectionRenderer({
   section,
@@ -31,150 +62,213 @@ function SectionRenderer({
         </div>
       </FadeUp>
 
-      {/* Content — offset layout for standard sections */}
-      <FadeUp delay={0.1}>
-        <div className="mx-auto mt-8 max-w-[1400px] px-6 lg:px-12">
-          <div className={`grid gap-12 md:grid-cols-12 ${isEven ? "" : ""}`}>
-            <div className={`${isEven ? "md:col-span-7 md:col-start-1" : "md:col-span-7 md:col-start-6"}`}>
-              <p className="text-lg leading-[1.8] text-[var(--text-muted)]">
-                {section.content}
-              </p>
+      {/* Code section with image — side by side layout */}
+      {section.type === "code" && section.code && section.images && section.images.length > 0 ? (
+        <>
+          <FadeUp delay={0.1}>
+            <div className="mx-auto mt-8 max-w-[1400px] px-6 lg:px-12">
+              <div className={`${isEven ? "max-w-3xl" : "ml-auto max-w-3xl"}`}>
+                <p className="text-lg leading-[1.8] text-[var(--text-muted)]">
+                  {section.content}
+                </p>
+              </div>
             </div>
-          </div>
-        </div>
-      </FadeUp>
+          </FadeUp>
 
-      {/* Stack section */}
-      {section.type === "stack" && (
-        <FadeUp delay={0.2}>
           <div className="mx-auto mt-12 max-w-[1400px] px-6 lg:px-12">
-            <div className="grid gap-px overflow-hidden rounded-2xl border border-[var(--border-color)] bg-[var(--border-color)] md:grid-cols-2">
-              {section.hardware && section.hardware.length > 0 && (
-                <div className="bg-[var(--surface)] p-8">
-                  <h3 className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--accent)]">
-                    Hardware
-                  </h3>
-                  <ul className="mt-5 space-y-3">
-                    {section.hardware.map((item) => (
-                      <li
-                        key={item}
-                        className="flex items-start gap-3 text-sm leading-relaxed text-[var(--text-muted)]"
-                      >
-                        <span className="mt-2 block h-1 w-1 shrink-0 rounded-full bg-[var(--accent)]" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
+            <div className="grid items-start gap-6 lg:grid-cols-2">
+              {/* Code block */}
+              <ScaleIn delay={0.15}>
+                <div className="overflow-hidden rounded-2xl border border-[var(--border-color)] bg-[var(--code-bg)]">
+                  <div className="flex items-center justify-between border-b border-[var(--border-color)] px-6 py-3">
+                    <div className="flex items-center gap-3">
+                      <div className="flex gap-2">
+                        <div className="h-3 w-3 rounded-full bg-[hsl(0_70%_50%)] opacity-60" />
+                        <div className="h-3 w-3 rounded-full bg-[hsl(45_70%_50%)] opacity-60" />
+                        <div className="h-3 w-3 rounded-full bg-[hsl(120_70%_40%)] opacity-60" />
+                      </div>
+                    </div>
+                    <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-[var(--text-subtle)]">
+                      {section.language}
+                    </span>
+                  </div>
+                  <pre className="!m-0 !rounded-none !border-0 overflow-x-auto p-6 md:p-8">
+                    <code className="text-[13px] leading-[1.8] text-[var(--text-muted)]">
+                      {section.code}
+                    </code>
+                  </pre>
                 </div>
-              )}
-              {section.software && section.software.length > 0 && (
-                <div className="bg-[var(--surface)] p-8">
-                  <h3 className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--accent)]">
-                    Software
-                  </h3>
-                  <ul className="mt-5 space-y-3">
-                    {section.software.map((item) => (
-                      <li
-                        key={item}
-                        className="flex items-start gap-3 text-sm leading-relaxed text-[var(--text-muted)]"
-                      >
-                        <span className="mt-2 block h-1 w-1 shrink-0 rounded-full bg-[var(--accent)]" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </div>
-        </FadeUp>
-      )}
+              </ScaleIn>
 
-      {/* Code section — full width, premium terminal look */}
-      {section.type === "code" && section.code && (
-        <ScaleIn delay={0.15}>
-          <div className="mx-auto mt-12 max-w-[1400px] px-6 lg:px-12">
-            <div className="overflow-hidden rounded-2xl border border-[var(--border-color)] bg-[var(--code-bg)]">
-              <div className="flex items-center justify-between border-b border-[var(--border-color)] px-6 py-3">
-                <div className="flex items-center gap-3">
-                  <div className="flex gap-2">
-                    <div className="h-3 w-3 rounded-full bg-[hsl(0_70%_50%)] opacity-60" />
-                    <div className="h-3 w-3 rounded-full bg-[hsl(45_70%_50%)] opacity-60" />
-                    <div className="h-3 w-3 rounded-full bg-[hsl(120_70%_40%)] opacity-60" />
+              {/* App screenshot */}
+              <ScaleIn delay={0.25}>
+                <div className="overflow-hidden rounded-2xl border border-[var(--border-color)] bg-[var(--surface)]">
+                  <div className="relative flex items-center justify-center p-6 md:p-8">
+                    <div className="relative w-full">
+                      <ClickableImage
+                        src={section.images[0]}
+                        alt={section.heading}
+                        fill={false}
+                        className="h-auto w-full rounded-lg object-contain"
+                        sizes="(max-width: 1024px) 90vw, 45vw"
+                      />
+                    </div>
                   </div>
                 </div>
-                <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-[var(--text-subtle)]">
-                  {section.language}
-                </span>
-              </div>
-              <pre className="!m-0 !rounded-none !border-0 overflow-x-auto p-6 md:p-8">
-                <code className="text-[13px] leading-[1.8] text-[var(--text-muted)]">
-                  {section.code}
-                </code>
-              </pre>
+              </ScaleIn>
             </div>
           </div>
-        </ScaleIn>
-      )}
+        </>
+      ) : (
+        <>
+          {/* Content — offset layout for standard sections */}
+          <FadeUp delay={0.1}>
+            <div className="mx-auto mt-8 max-w-[1400px] px-6 lg:px-12">
+              <div className="grid gap-12 md:grid-cols-12">
+                <div className={`${isEven ? "md:col-span-7 md:col-start-1" : "md:col-span-7 md:col-start-6"}`}>
+                  <p className="text-lg leading-[1.8] text-[var(--text-muted)]">
+                    {section.content}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </FadeUp>
 
-      {/* Failure section — timeline style */}
-      {section.type === "failure" && section.iterations && (
-        <div className="mx-auto mt-12 max-w-[1400px] px-6 lg:px-12">
-          <div className="space-y-6">
-            {section.iterations.map((iter, i) => (
-              <FadeUp key={iter.version} delay={i * 0.1}>
-                <div className="group rounded-2xl border border-[var(--border-color)] bg-[var(--surface)] p-6 transition-colors hover:border-[var(--accent)]/20 md:p-8">
-                  <div className="flex items-start gap-5">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--accent-muted)]">
-                      <span className="font-mono text-sm font-bold text-[var(--accent)]">
-                        {i + 1}
-                      </span>
+          {/* Stack section */}
+          {section.type === "stack" && (
+            <FadeUp delay={0.2}>
+              <div className="mx-auto mt-12 max-w-[1400px] px-6 lg:px-12">
+                <div className="grid gap-px overflow-hidden rounded-2xl border border-[var(--border-color)] bg-[var(--border-color)] md:grid-cols-2">
+                  {section.hardware && section.hardware.length > 0 && (
+                    <div className="bg-[var(--surface)] p-8">
+                      <h3 className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--accent)]">
+                        Hardware
+                      </h3>
+                      <ul className="mt-5 space-y-3">
+                        {section.hardware.map((item) => (
+                          <li
+                            key={item}
+                            className="flex items-start gap-3 text-sm leading-relaxed text-[var(--text-muted)]"
+                          >
+                            <span className="mt-2 block h-1 w-1 shrink-0 rounded-full bg-[var(--accent)]" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
-                    <div className="flex-1">
-                      <h4 className="font-[family-name:var(--font-display)] text-base font-semibold text-[var(--text)]">
-                        {iter.version}
-                      </h4>
-                      <div className="mt-4 grid gap-4 md:grid-cols-2">
-                        <div className="rounded-xl bg-[var(--background)] p-4">
-                          <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-red-400">
-                            Issue
+                  )}
+                  {section.software && section.software.length > 0 && (
+                    <div className="bg-[var(--surface)] p-8">
+                      <h3 className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--accent)]">
+                        Software
+                      </h3>
+                      <ul className="mt-5 space-y-3">
+                        {section.software.map((item) => (
+                          <li
+                            key={item}
+                            className="flex items-start gap-3 text-sm leading-relaxed text-[var(--text-muted)]"
+                          >
+                            <span className="mt-2 block h-1 w-1 shrink-0 rounded-full bg-[var(--accent)]" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </FadeUp>
+          )}
+
+          {/* Code section without images — full width */}
+          {section.type === "code" && section.code && (
+            <ScaleIn delay={0.15}>
+              <div className="mx-auto mt-12 max-w-[1400px] px-6 lg:px-12">
+                <div className="overflow-hidden rounded-2xl border border-[var(--border-color)] bg-[var(--code-bg)]">
+                  <div className="flex items-center justify-between border-b border-[var(--border-color)] px-6 py-3">
+                    <div className="flex items-center gap-3">
+                      <div className="flex gap-2">
+                        <div className="h-3 w-3 rounded-full bg-[hsl(0_70%_50%)] opacity-60" />
+                        <div className="h-3 w-3 rounded-full bg-[hsl(45_70%_50%)] opacity-60" />
+                        <div className="h-3 w-3 rounded-full bg-[hsl(120_70%_40%)] opacity-60" />
+                      </div>
+                    </div>
+                    <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-[var(--text-subtle)]">
+                      {section.language}
+                    </span>
+                  </div>
+                  <pre className="!m-0 !rounded-none !border-0 overflow-x-auto p-6 md:p-8">
+                    <code className="text-[13px] leading-[1.8] text-[var(--text-muted)]">
+                      {section.code}
+                    </code>
+                  </pre>
+                </div>
+              </div>
+            </ScaleIn>
+          )}
+
+          {/* Failure section — timeline style */}
+          {section.type === "failure" && section.iterations && (
+            <div className="mx-auto mt-12 max-w-[1400px] px-6 lg:px-12">
+              <div className="space-y-6">
+                {section.iterations.map((iter, i) => (
+                  <FadeUp key={iter.version} delay={i * 0.1}>
+                    <div className="group rounded-2xl border border-[var(--border-color)] bg-[var(--surface)] p-6 transition-colors hover:border-[var(--accent)]/20 md:p-8">
+                      <div className="flex items-start gap-5">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--accent-muted)]">
+                          <span className="font-mono text-sm font-bold text-[var(--accent)]">
+                            {i + 1}
                           </span>
-                          <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted)]">
-                            {iter.issue}
-                          </p>
                         </div>
-                        <div className="rounded-xl bg-[var(--background)] p-4">
-                          <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-green-400">
-                            Resolution
-                          </span>
-                          <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted)]">
-                            {iter.fix}
-                          </p>
+                        <div className="flex-1">
+                          <h4 className="font-[family-name:var(--font-display)] text-base font-semibold text-[var(--text)]">
+                            {iter.version}
+                          </h4>
+                          <div className="mt-4 grid gap-4 md:grid-cols-2">
+                            <div className="rounded-xl bg-[var(--background)] p-4">
+                              <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-red-400">
+                                Issue
+                              </span>
+                              <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted)]">
+                                {iter.issue}
+                              </p>
+                            </div>
+                            <div className="rounded-xl bg-[var(--background)] p-4">
+                              <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-green-400">
+                                Resolution
+                              </span>
+                              <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted)]">
+                                {iter.fix}
+                              </p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-              </FadeUp>
-            ))}
-          </div>
-        </div>
+                  </FadeUp>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
       )}
 
-      {/* Images — full bleed on single, side-by-side on multiple */}
-      {section.images && section.images.length > 0 && (
+      {/* Images — uses object-contain so nothing is cropped, clickable for lightbox */}
+      {section.images && section.images.length > 0 && !(section.type === "code" && section.code) && (
         <div className="mt-16">
           {section.images.length === 1 ? (
             <ScaleIn>
               <div className="mx-auto max-w-[1400px] px-6 lg:px-12">
-                <div className="relative aspect-[16/9] overflow-hidden rounded-2xl bg-[var(--surface)]">
-                  <Image
-                    src={section.images[0]}
-                    alt={section.heading}
-                    fill
-                    className="object-cover"
-                    sizes="90vw"
-                  />
+                <div className="relative overflow-hidden rounded-2xl bg-[var(--surface)] p-4">
+                  <div className="relative aspect-[16/9]">
+                    <ClickableImage
+                      src={section.images[0]}
+                      alt={section.heading}
+                      fill
+                      className="object-contain"
+                      sizes="90vw"
+                    />
+                  </div>
                 </div>
               </div>
             </ScaleIn>
@@ -183,14 +277,16 @@ function SectionRenderer({
               <div className="grid gap-4 md:grid-cols-2">
                 {section.images.map((img, i) => (
                   <ScaleIn key={img} delay={i * 0.1}>
-                    <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-[var(--surface)]">
-                      <Image
-                        src={img}
-                        alt={section.heading}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, 45vw"
-                      />
+                    <div className="relative overflow-hidden rounded-2xl bg-[var(--surface)] p-4">
+                      <div className="relative aspect-[16/10]">
+                        <ClickableImage
+                          src={img}
+                          alt={section.heading}
+                          fill
+                          className="object-contain"
+                          sizes="(max-width: 768px) 100vw, 45vw"
+                        />
+                      </div>
                     </div>
                   </ScaleIn>
                 ))}

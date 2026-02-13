@@ -38,7 +38,7 @@ export const projects: Project[] = [
     title: "Dynamic Drinking Vessel",
     description:
       "A Bluetooth-connected water bottle that mixes custom flavors on demand, built for Coca-Cola.",
-    thumbnail: "/images/ddv/product.jpg",
+    thumbnail: "/images/ddv/poster.jpg",
     tags: ["IoT", "Swift", "Arduino", "CAD", "Prototyping", "BLE"],
     summary:
       "I led firmware development and iOS app design for a smart water bottle that uses piezo-electric pumps to mix four flavors at user-defined intensities. Built in partnership with Coca-Cola as a senior capstone.",
@@ -54,7 +54,7 @@ export const projects: Project[] = [
       "InDesign",
     ],
     team: "6 students (Industrial Design, Mechanical Engineering, Electrical & Computer Engineering)",
-    heroImage: "/images/ddv/product.jpg",
+    heroImage: "/images/ddv/poster.jpg",
     sections: [
       {
         heading: "The Challenge",
