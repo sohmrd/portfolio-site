@@ -43,7 +43,7 @@ export function TextReveal({
   className?: string;
 }) {
   return (
-    <div className={`overflow-hidden pb-[0.15em] -mb-[0.15em] ${className || ""}`}>
+    <div className={`overflow-hidden pb-[0.3em] -mb-[0.3em] ${className || ""}`}>
       <motion.div
         initial={{ y: "100%" }}
         whileInView={{ y: 0 }}
