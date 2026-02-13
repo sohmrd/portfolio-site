@@ -37,11 +37,11 @@ export const projects: Project[] = [
     slug: "dynamic-drinking-vessel",
     title: "Dynamic Drinking Vessel",
     description:
-      "A Bluetooth-connected water bottle that mixes custom flavors on demand, built for Coca-Cola.",
+      "A smart water bottle that mixes four flavors on demand via Bluetooth, built for Coca-Cola.",
     thumbnail: "/images/ddv/poster.jpg",
     tags: ["IoT", "Swift", "Arduino", "CAD", "Prototyping", "BLE"],
     summary:
-      "I led firmware development and iOS app design for a smart water bottle that uses piezo-electric pumps to mix four flavors at user-defined intensities. Built in partnership with Coca-Cola as a senior capstone.",
+      "I led firmware development and iOS app design for a Bluetooth-connected water bottle that mixes up to four flavors at user-controlled intensities. Built for Coca-Cola as an interdisciplinary senior capstone at Georgia Tech.",
     timeline: "2025",
     role: "Firmware Lead & iOS Developer",
     duration: "8 months",
@@ -57,40 +57,78 @@ export const projects: Project[] = [
     heroImage: "/images/ddv/poster.jpg",
     sections: [
       {
-        heading: "The Challenge",
+        heading: "The Brief",
         type: "standard",
         content:
-          "Coca-Cola tasked our interdisciplinary team with designing a Dynamic Drinking Vessel: a reusable bottle that lets users instantly mix flavors and control intensity, sip by sip. The core constraint was keeping the main water reservoir clean while actively pumping flavor. Unlike competitors like Cirkul that rely on gravity and a single flavor, we needed to support four simultaneous flavors with precise Bluetooth-controlled dosing.",
+          "Coca-Cola challenged our six-person team to design a \"Dynamic Drinking Vessel\" for young adults aged 18 to 24: a reusable bottle that lets users create custom-flavored drinks on the go. The requirements were specific. Users needed to mix multiple flavors simultaneously, control the intensity of each one, and the main water reservoir had to stay clean (no flavor contamination). Our closest competitor, Cirkul, only supports a single flavor through passive gravity flow. We needed to beat that with active, electronically controlled multi-flavor mixing.",
         images: ["/images/ddv/ideation.jpg"],
       },
       {
-        heading: "The Stack",
+        heading: "The Product",
+        type: "standard",
+        content:
+          "We designed the Omni Water Bottle: a double-walled insulated bottle with a hexagonal cap that houses up to four removable flavor cartridges. Each cartridge connects to a dedicated piezo-electric micro pump inside the cap. When the user takes a sip, the pumps inject precise doses of flavor concentrate into the water stream through a central straw, so the main reservoir always stays as clean water. The hexagonal cap form factor was chosen because it fits standard 2.8-inch cup holders while maximizing internal space for four cartridges arranged around a central channel.",
+        images: ["/images/ddv/product.jpg"],
+      },
+      {
+        heading: "The System",
         type: "stack",
         content:
-          "The system spans mechanical engineering, embedded firmware, and a native iOS companion app, all communicating over Bluetooth Low Energy.",
+          "The Omni Bottle is three systems working together: a mechanical assembly designed in SolidWorks, embedded firmware running on an Arduino Nano 33 BLE, and a native iOS companion app. They communicate over Bluetooth Low Energy using a custom protocol with 14 characteristics across two services.",
         hardware: [
-          "4x Piezo-electric micro pumps",
-          "Arduino Nano 33 BLE",
-          "Custom PCB with pump drivers",
-          "Tilt sensor + button input",
-          "Rechargeable LiPo battery",
-          "SolidWorks-designed bottle body + hexagonal cap",
+          "4x Piezo-electric micro pumps (one per flavor channel)",
+          "Arduino Nano 33 BLE (main controller)",
+          "Custom PCB with dedicated motor driver ICs",
+          "Tilt sensor for automatic sip detection",
+          "Rechargeable LiPo battery (1+ day active use)",
+          "Rolling pinch valves to prevent backflow",
         ],
         software: [
-          "Arduino BLE (C++)",
-          "Swift / SwiftUI",
-          "CoreBluetooth framework",
-          "Custom BLE service with 14 characteristics",
-          "SolidWorks 2024",
-          "InDesign (expo poster)",
+          "Arduino C++ firmware (non-blocking pump control)",
+          "Swift / SwiftUI iOS app",
+          "CoreBluetooth (14 BLE characteristics)",
+          "SolidWorks 2024 (full mechanical assembly)",
         ],
         images: ["/images/ddv/electronics.jpg", "/images/ddv/mechanical.jpg"],
       },
       {
-        heading: "The Logic: Firmware",
+        heading: "What Went Wrong",
+        type: "failure",
+        content:
+          "Over eight months, the project went through four major pivots. Each failure revealed a fundamental flaw in our assumptions and forced a redesign.",
+        iterations: [
+          {
+            version: "v1: Gravity Feed",
+            issue:
+              "Our first prototype relied on gravity to drip flavor from top-mounted pods into the water stream. Flow rate was inconsistent, impossible to control electronically, and stopped entirely at certain tilt angles.",
+            fix: "Replaced passive gravity with piezo-electric micro pumps that actively push fluid. This gave us precise, electronically controllable dosing regardless of bottle orientation.",
+          },
+          {
+            version: "v2: Seal Failures",
+            issue:
+              "With pumps working, flavor began leaking between the cartridge housing and cap during normal use. The O-ring seals we selected deformed after repeated insertions and temperature changes.",
+            fix: "Designed a rolling pinch valve mechanism in SolidWorks that physically pinches the tubing shut when pumps are off. Took three tolerance iterations to get the valve geometry right for reliable sealing.",
+          },
+          {
+            version: "v3: Power Delivery",
+            issue:
+              "When all four pumps ran simultaneously, the first driver board could not supply enough current. Pumps stalled under load and the Arduino brownout-reset, losing BLE connection.",
+            fix: "Replaced the shared driver with dedicated motor driver ICs per channel and upgraded to a higher-capacity LiPo. Each pump now has its own power path, eliminating current starvation.",
+          },
+          {
+            version: "v4: State Sync",
+            issue:
+              "After the iOS app disconnected and reconnected (common during normal use), it displayed stale flavor values from the previous session instead of the Arduino's current state.",
+            fix: "Added a full state synchronization on every BLE connection event: the app reads all four flavor characteristics from the Arduino before allowing any user interaction.",
+          },
+        ],
+        images: ["/images/ddv/prototype.jpg", "/images/ddv/testing.jpg"],
+      },
+      {
+        heading: "The Firmware",
         type: "code",
         content:
-          "The Arduino firmware manages four independent pump channels using non-blocking millis()-based timing. Each pump's frequency maps to a 1-10 intensity value set from the iOS app over BLE. A tilt sensor activates dispensing only when the user tips the bottle to drink.",
+          "The Arduino firmware controls four pump channels independently using non-blocking timing. Each pump's frequency is mapped to a 1-to-10 intensity value received from the iOS app over BLE. A tilt sensor gates all dispensing so pumps only activate when the user tips the bottle to drink.",
         language: "C++",
         code: `void freqControl() {
   long now = millis();
@@ -114,18 +152,17 @@ int pumpSpeed(long intensity) {
 }`,
       },
       {
-        heading: "The Logic: Companion App",
+        heading: "The Companion App",
         type: "code",
         content:
-          "The iOS app connects to the bottle over CoreBluetooth. On connection, it discovers two BLE services (flavor control + mode control) with 14 characteristics total. It syncs the current flavor values from the Arduino, then writes updates in real time as the user adjusts sliders.",
+          "I built the iOS app in SwiftUI. It connects to the bottle over CoreBluetooth, discovers two BLE services (flavor control and mode control), and syncs the current state from the Arduino on every connection. Users adjust four flavor intensity sliders that write values to the Arduino in real time. The app also supports saved \"Quick Mix\" presets and a random mode.",
         language: "Swift",
         images: ["/images/ddv/app.png"],
         code: `class BLEManager: NSObject, ObservableObject {
   @Published var isConnected = false
   @Published var syncedFlavorValues: [UInt8]? = nil
 
-  // Custom BLE service UUIDs matching Arduino firmware
-  private let ledServiceUUID = CBUUID(
+  private let serviceUUID = CBUUID(
     string: "19b10000-e8f2-537e-4f6c-d104768a1214"
   )
 
@@ -147,7 +184,6 @@ int pumpSpeed(long intensity) {
         peripheral.setNotifyValue(true, for: char)
       }
     }
-    // Sync flavor state from hardware
     if allCharacteristicsDiscovered {
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
         self.readFlavorValues()
@@ -157,44 +193,11 @@ int pumpSpeed(long intensity) {
 }`,
       },
       {
-        heading: "Failure Log",
-        type: "failure",
-        content:
-          "This project had real engineering failures, not hypotheticals. Each one pushed the design forward.",
-        iterations: [
-          {
-            version: "v1 Gravity Prototype",
-            issue:
-              "Initial design relied on gravity to dispense flavor from top-mounted pods. Flow was inconsistent and could not be electronically controlled.",
-            fix: "Switched to piezo-electric pumps that actively push fluid, enabling precise Bluetooth-controlled dosing.",
-          },
-          {
-            version: "v2 Sealing Problems",
-            issue:
-              "Flavor leaked between cartridge and cap during tilting. O-ring seals deformed under repeated use.",
-            fix: "Redesigned the cap with a rolling pinch valve mechanism (SolidWorks, 3 tolerance iterations) that pinches tubing shut when not dispensing.",
-          },
-          {
-            version: "v3 Pump Driver Testing",
-            issue:
-              "First pump driver boards could not supply enough current for all 4 pumps simultaneously. Pumps stalled under load.",
-            fix: "Added dedicated motor driver ICs per channel and upgraded to a higher-capacity LiPo battery. Validated with driver testing spreadsheet.",
-          },
-          {
-            version: "v4 BLE Sync",
-            issue:
-              "iOS app and Arduino fell out of sync after reconnection. App would show stale flavor values from the previous session.",
-            fix: "Added a full state sync on BLE connection: app reads all 4 flavor characteristics from the Arduino before allowing user interaction.",
-          },
-        ],
-        images: ["/images/ddv/process.jpg"],
-      },
-      {
-        heading: "The Outcome",
+        heading: "The Result",
         type: "standard",
         content:
-          "We delivered a working prototype demonstrated to Coca-Cola engineers at the Georgia Tech Capstone Expo. The Omni Bottle mixes up to 4 flavors with individually adjustable intensity (16+ combinations), controlled via iOS app or automatic tilt-to-dispense. The bottle keeps the main reservoir as clean water only, with flavor cartridges that are easy to swap and refill. Our team produced a complete technical binder, fabrication package, and branded expo poster.",
-        images: ["/images/ddv/product.jpg", "/images/ddv/team.jpg"],
+          "We demonstrated a fully working prototype to Coca-Cola engineers at the Georgia Tech Interdisciplinary Capstone Expo. The Omni Bottle mixes up to four flavors with individually adjustable intensity (over 16 possible combinations), controlled through the iOS app or automatically via tilt-to-dispense. The main water reservoir stays clean at all times, and flavor cartridges are simple to swap and refill. We delivered a complete technical binder, fabrication package, bill of materials, and the branded expo poster shown in the hero image.",
+        images: ["/images/ddv/team.jpg"],
       },
     ],
     tier: 1,
