@@ -9,6 +9,8 @@ import {
   TextReveal,
   ScaleIn,
 } from "@/components/motion/fade-up";
+import { DotGrid } from "@/components/interactive/dot-grid";
+import { TiltCard } from "@/components/interactive/tilt-card";
 
 const projects = getFeaturedProjects();
 const ease = [0.25, 0.1, 0.25, 1] as const;
@@ -112,11 +114,8 @@ export default function Home() {
     <>
       {/* Hero — Full viewport, massive typography */}
       <section className="relative flex min-h-screen flex-col justify-end px-6 pb-24 pt-40 lg:px-12 lg:pb-32">
-        {/* Ambient gradient */}
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -right-[20%] -top-[20%] h-[600px] w-[600px] rounded-full bg-[var(--accent)] opacity-[0.04] blur-[120px]" />
-          <div className="absolute -bottom-[10%] -left-[10%] h-[400px] w-[400px] rounded-full bg-[var(--accent)] opacity-[0.02] blur-[100px]" />
-        </div>
+        {/* Interactive dot grid background */}
+        <DotGrid />
 
         <div className="relative mx-auto w-full max-w-[1400px]">
           {/* Eyebrow */}
@@ -251,21 +250,21 @@ export default function Home() {
               </FadeUp>
 
               <FadeUp delay={0.3}>
-                <div className="mt-12 grid grid-cols-2 gap-x-8 gap-y-6">
+                <div className="mt-12 grid grid-cols-2 gap-4">
                   {[
                     { label: "Design", items: "Form, Materials, User Research, CAD" },
                     { label: "Software", items: "Swift, Python, React, C++" },
                     { label: "Hardware", items: "Arduino, BLE, Sensors, PCB" },
                     { label: "AI / ML", items: "Computer Vision, PyTorch, YOLO" },
                   ].map((skill) => (
-                    <div key={skill.label} className="group">
+                    <TiltCard key={skill.label} maxRotation={6} glareOpacity={0.1}>
                       <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--accent)]">
                         {skill.label}
                       </p>
-                      <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted)]">
+                      <p className="mt-3 text-sm leading-relaxed text-[var(--text-muted)]">
                         {skill.items}
                       </p>
-                    </div>
+                    </TiltCard>
                   ))}
                 </div>
               </FadeUp>
