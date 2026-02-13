@@ -94,7 +94,7 @@ function SectionRenderer({
       {section.type === "code" && section.code && (
         <ScaleIn delay={0.15}>
           <div className="mx-auto mt-12 max-w-[1400px] px-6 lg:px-12">
-            <div className="overflow-hidden rounded-2xl border border-[var(--border-color)] bg-[hsl(220_15%_7%)]">
+            <div className="overflow-hidden rounded-2xl border border-[var(--border-color)] bg-[var(--code-bg)]">
               <div className="flex items-center justify-between border-b border-[var(--border-color)] px-6 py-3">
                 <div className="flex items-center gap-3">
                   <div className="flex gap-2">
