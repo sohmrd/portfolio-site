@@ -30,91 +30,162 @@ export function Navigation() {
       <motion.header
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           scrolled
-            ? "bg-[var(--background)]/80 backdrop-blur-xl border-b border-[var(--border-color)]"
+            ? "bg-[var(--background)]/80 backdrop-blur-2xl"
             : "bg-transparent"
         }`}
       >
-        <nav className="mx-auto flex max-w-screen-xl items-center justify-between px-6 py-4 lg:px-8">
+        <nav className="mx-auto flex max-w-[1400px] items-center justify-between px-6 py-5 lg:px-12">
           <Link
             href="/"
-            className="font-[family-name:var(--font-display)] text-lg font-bold tracking-tight text-[var(--text)] transition-colors hover:text-[var(--accent)]"
+            className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--text)] transition-colors hover:text-[var(--accent)]"
           >
             Sohm Dubey
           </Link>
 
           {/* Desktop nav */}
-          <div className="hidden items-center gap-8 md:flex">
+          <div className="hidden items-center gap-10 md:flex">
             {links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`text-sm font-medium transition-colors ${
+                className={`relative text-[13px] font-medium tracking-wide transition-colors ${
                   pathname === link.href
-                    ? "text-[var(--accent)]"
-                    : "text-[var(--text-muted)] hover:text-[var(--text)]"
+                    ? "text-[var(--text)]"
+                    : "text-[var(--text-subtle)] hover:text-[var(--text-muted)]"
                 }`}
               >
                 {link.label}
+                {pathname === link.href && (
+                  <motion.span
+                    layoutId="nav-indicator"
+                    className="absolute -bottom-1.5 left-0 right-0 h-px bg-[var(--accent)]"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
               </Link>
             ))}
             <a
               href="mailto:sohmdubey@gmail.com"
-              className="rounded-full bg-[var(--accent)] px-4 py-2 text-sm font-medium text-[var(--background)] transition-colors hover:bg-[var(--accent-hover)]"
+              className="text-[13px] font-medium text-[var(--text-subtle)] transition-colors hover:text-[var(--accent)]"
             >
-              Get in Touch
+              Contact
             </a>
           </div>
 
           {/* Mobile hamburger */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="flex flex-col gap-1.5 md:hidden"
+            className="relative flex h-8 w-8 items-center justify-center md:hidden"
             aria-label="Toggle menu"
           >
             <motion.span
-              animate={mobileOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
-              className="block h-0.5 w-6 bg-[var(--text)]"
+              animate={
+                mobileOpen
+                  ? { rotate: 45, y: 0, width: 20 }
+                  : { rotate: 0, y: -4, width: 20 }
+              }
+              transition={{ duration: 0.3, ease: [0.77, 0, 0.175, 1] }}
+              className="absolute block h-px bg-[var(--text)]"
             />
             <motion.span
-              animate={mobileOpen ? { opacity: 0 } : { opacity: 1 }}
-              className="block h-0.5 w-6 bg-[var(--text)]"
+              animate={mobileOpen ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
+              transition={{ duration: 0.2 }}
+              className="absolute block h-px w-5 bg-[var(--text)]"
             />
             <motion.span
-              animate={mobileOpen ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 }}
-              className="block h-0.5 w-6 bg-[var(--text)]"
+              animate={
+                mobileOpen
+                  ? { rotate: -45, y: 0, width: 20 }
+                  : { rotate: 0, y: 4, width: 20 }
+              }
+              transition={{ duration: 0.3, ease: [0.77, 0, 0.175, 1] }}
+              className="absolute block h-px bg-[var(--text)]"
             />
           </button>
         </nav>
+
+        {/* Subtle bottom line when scrolled */}
+        <motion.div
+          initial={false}
+          animate={{ opacity: scrolled ? 1 : 0 }}
+          transition={{ duration: 0.3 }}
+          className="absolute bottom-0 left-0 right-0 h-px bg-[var(--border-color)]"
+        />
       </motion.header>
 
-      {/* Mobile menu */}
+      {/* Mobile menu — full screen takeover */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-[var(--background)]/95 backdrop-blur-xl md:hidden"
+            transition={{ duration: 0.4 }}
+            className="fixed inset-0 z-40 flex flex-col bg-[var(--background)] md:hidden"
           >
-            <div className="flex h-full flex-col items-center justify-center gap-8">
-              {links.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="font-[family-name:var(--font-display)] text-3xl font-bold text-[var(--text)] transition-colors hover:text-[var(--accent)]"
+            <div className="flex flex-1 flex-col justify-center px-12">
+              <nav className="space-y-2">
+                {links.map((link, i) => (
+                  <motion.div
+                    key={link.href}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ delay: i * 0.1, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+                  >
+                    <Link
+                      href={link.href}
+                      className={`block py-3 font-[family-name:var(--font-display)] text-[clamp(2rem,8vw,3.5rem)] font-bold leading-[1.1] tracking-tight transition-colors ${
+                        pathname === link.href
+                          ? "text-[var(--text)]"
+                          : "text-[var(--text-subtle)] hover:text-[var(--text-muted)]"
+                      }`}
+                    >
+                      {link.label}
+                    </Link>
+                  </motion.div>
+                ))}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ delay: 0.2, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
                 >
-                  {link.label}
-                </Link>
-              ))}
-              <a
-                href="mailto:sohmdubey@gmail.com"
-                className="mt-4 rounded-full bg-[var(--accent)] px-6 py-3 text-base font-medium text-[var(--background)]"
+                  <a
+                    href="mailto:sohmdubey@gmail.com"
+                    className="block py-3 font-[family-name:var(--font-display)] text-[clamp(2rem,8vw,3.5rem)] font-bold leading-[1.1] tracking-tight text-[var(--text-subtle)] transition-colors hover:text-[var(--text-muted)]"
+                  >
+                    Contact
+                  </a>
+                </motion.div>
+              </nav>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="mt-16 flex gap-6"
               >
-                Get in Touch
-              </a>
+                <a
+                  href="https://linkedin.com/in/sohmdubey"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--text-subtle)] transition-colors hover:text-[var(--accent)]"
+                >
+                  LinkedIn
+                </a>
+                <a
+                  href="https://github.com/sohmrd"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--text-subtle)] transition-colors hover:text-[var(--accent)]"
+                >
+                  GitHub
+                </a>
+              </motion.div>
             </div>
           </motion.div>
         )}

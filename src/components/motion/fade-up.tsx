@@ -1,25 +1,31 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { ReactNode } from "react";
+
+const ease = [0.25, 0.1, 0.25, 1] as const;
 
 interface FadeUpProps {
   children: ReactNode;
   delay?: number;
   className?: string;
+  distance?: number;
 }
 
-export function FadeUp({ children, delay = 0, className }: FadeUpProps) {
+export function FadeUp({
+  children,
+  delay = 0,
+  className,
+  distance = 40,
+}: FadeUpProps) {
+  const prefersReduced = useReducedMotion();
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={prefersReduced ? {} : { opacity: 0, y: distance }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{
-        duration: 0.5,
-        delay,
-        ease: [0.25, 0.1, 0.25, 1],
-      }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.8, delay, ease }}
       className={className}
     >
       {children}
@@ -27,20 +33,45 @@ export function FadeUp({ children, delay = 0, className }: FadeUpProps) {
   );
 }
 
-export function StaggerContainer({
+export function TextReveal({
   children,
+  delay = 0,
   className,
 }: {
   children: ReactNode;
+  delay?: number;
   className?: string;
+}) {
+  return (
+    <div className={`overflow-hidden ${className || ""}`}>
+      <motion.div
+        initial={{ y: "100%" }}
+        whileInView={{ y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8, delay, ease: [0.77, 0, 0.175, 1] }}
+      >
+        {children}
+      </motion.div>
+    </div>
+  );
+}
+
+export function StaggerContainer({
+  children,
+  className,
+  staggerDelay = 0.15,
+}: {
+  children: ReactNode;
+  className?: string;
+  staggerDelay?: number;
 }) {
   return (
     <motion.div
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: "-50px" }}
+      viewport={{ once: true, margin: "-80px" }}
       variants={{
-        visible: { transition: { staggerChildren: 0.1 } },
+        visible: { transition: { staggerChildren: staggerDelay } },
       }}
       className={className}
     >
@@ -59,13 +90,35 @@ export function StaggerItem({
   return (
     <motion.div
       variants={{
-        hidden: { opacity: 0, y: 20 },
+        hidden: { opacity: 0, y: 40 },
         visible: {
           opacity: 1,
           y: 0,
-          transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] },
+          transition: { duration: 0.8, ease },
         },
       }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+export function ScaleIn({
+  children,
+  delay = 0,
+  className,
+}: {
+  children: ReactNode;
+  delay?: number;
+  className?: string;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 1, delay, ease }}
       className={className}
     >
       {children}
