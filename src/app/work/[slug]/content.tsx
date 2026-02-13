@@ -76,10 +76,10 @@ function SectionRenderer({
           </FadeUp>
 
           <div className="mx-auto mt-12 max-w-[1400px] px-6 lg:px-12">
-            <div className="grid items-start gap-6 lg:grid-cols-2">
+            <div className="grid items-stretch gap-6 lg:grid-cols-2">
               {/* Code block */}
-              <ScaleIn delay={0.15}>
-                <div className="overflow-hidden rounded-2xl border border-[var(--border-color)] bg-[var(--code-bg)]">
+              <ScaleIn delay={0.15} className="flex">
+                <div className="flex flex-1 flex-col overflow-hidden rounded-2xl border border-[var(--border-color)] bg-[var(--code-bg)]">
                   <div className="flex items-center justify-between border-b border-[var(--border-color)] px-6 py-3">
                     <div className="flex items-center gap-3">
                       <div className="flex gap-2">
@@ -92,7 +92,7 @@ function SectionRenderer({
                       {section.language}
                     </span>
                   </div>
-                  <pre className="!m-0 !rounded-none !border-0 overflow-x-auto p-6 md:p-8">
+                  <pre className="!m-0 !rounded-none !border-0 flex-1 overflow-x-auto overflow-y-auto p-6 md:p-8">
                     <code className="text-[13px] leading-[1.8] text-[var(--text-muted)]">
                       {section.code}
                     </code>
@@ -101,9 +101,9 @@ function SectionRenderer({
               </ScaleIn>
 
               {/* App screenshot */}
-              <ScaleIn delay={0.25}>
-                <div className="overflow-hidden rounded-2xl border border-[var(--border-color)] bg-[var(--surface)]">
-                  <div className="relative flex items-center justify-center p-6 md:p-8">
+              <ScaleIn delay={0.25} className="flex">
+                <div className="flex flex-1 flex-col overflow-hidden rounded-2xl border border-[var(--border-color)] bg-[var(--surface)]">
+                  <div className="relative flex flex-1 items-center justify-center p-6 md:p-8">
                     <div className="relative w-full">
                       <ClickableImage
                         src={section.images[0]}
