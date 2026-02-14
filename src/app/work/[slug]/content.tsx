@@ -1,11 +1,15 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, useScroll, useSpring } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import type { Project, Section } from "@/content/projects";
 import { FadeUp, TextReveal, ScaleIn } from "@/components/motion/fade-up";
-import { openLightbox } from "@/components/ui/lightbox";
+import { openLightbox, openLightboxGallery } from "@/components/ui/lightbox";
+
+const BLUR_PLACEHOLDER =
+  "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iaHNsKDIyMCwxNSUsOCUpIi8+PC9zdmc+";
 
 function ClickableImage({
   src,
@@ -13,22 +17,40 @@ function ClickableImage({
   fill,
   className,
   sizes,
+  gallery,
+  galleryIndex,
 }: {
   src: string;
   alt: string;
   fill?: boolean;
   className?: string;
   sizes?: string;
+  gallery?: { src: string; alt: string }[];
+  galleryIndex?: number;
 }) {
   return (
     <button
       type="button"
-      onClick={() => openLightbox(src, alt)}
+      onClick={() => {
+        if (gallery && gallery.length > 1) {
+          openLightboxGallery(gallery, galleryIndex ?? 0);
+        } else {
+          openLightbox(src, alt);
+        }
+      }}
       className="relative block h-full w-full cursor-zoom-in"
       aria-label={`View full image: ${alt}`}
     >
       {fill ? (
-        <Image src={src} alt={alt} fill className={className} sizes={sizes} />
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          className={className}
+          sizes={sizes}
+          placeholder="blur"
+          blurDataURL={BLUR_PLACEHOLDER}
+        />
       ) : (
         /* eslint-disable-next-line @next/next/no-img-element */
         <img src={src} alt={alt} className={className} />
@@ -72,6 +94,8 @@ function SectionImages({ images, heading }: { images: string[]; heading: string 
                   fill
                   className="object-contain"
                   sizes="(max-width: 768px) 100vw, 720px"
+                  gallery={images.map((im) => ({ src: im, alt: heading }))}
+                  galleryIndex={i}
                 />
               </div>
             </div>
@@ -79,6 +103,46 @@ function SectionImages({ images, heading }: { images: string[]; heading: string 
         ))}
       </div>
     </div>
+  );
+}
+
+/* ── Copy button ──────────────────────────────────────────────────── */
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+
+  return (
+    <button
+      onClick={async () => {
+        await navigator.clipboard.writeText(text);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }}
+      className="flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-[0.1em] text-[var(--code-subtle)] transition-colors hover:text-[var(--text-muted)]"
+      aria-label="Copy code"
+    >
+      {copied ? (
+        <svg
+          className="h-3.5 w-3.5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path d="M5 13l4 4L19 7" />
+        </svg>
+      ) : (
+        <svg
+          className="h-3.5 w-3.5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+        </svg>
+      )}
+      {copied ? "Copied" : "Copy"}
+    </button>
   );
 }
 
@@ -96,9 +160,15 @@ function SectionRenderer({
       <FadeUp>
         <div className="mx-auto max-w-[var(--container-max)] px-6 lg:px-12">
           <div className="flex items-baseline gap-4">
-            <span className="font-mono text-sm tabular-nums text-[var(--text-subtle)]">
+            <motion.span
+              className="inline-block font-mono text-sm tabular-nums text-[var(--text-subtle)]"
+              initial={{ opacity: 0, scale: 0.5 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ type: "spring", stiffness: 300, damping: 20, delay: 0.1 }}
+            >
               {String(index + 1).padStart(2, "0")}
-            </span>
+            </motion.span>
             <h2 className="font-[family-name:var(--font-display)] text-3xl font-bold tracking-tight text-[var(--text)] md:text-5xl">
               {section.heading}
             </h2>
@@ -175,9 +245,12 @@ function SectionRenderer({
                     <div className="h-2.5 w-2.5 rounded-full bg-[var(--code-subtle)] opacity-50" />
                     <div className="h-2.5 w-2.5 rounded-full bg-[var(--code-subtle)] opacity-50" />
                   </div>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-[var(--code-subtle)]">
-                    {section.language}
-                  </span>
+                  <div className="flex items-center gap-3">
+                    <CopyButton text={section.code} />
+                    <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-[var(--code-subtle)]">
+                      {section.language}
+                    </span>
+                  </div>
                 </div>
                 <pre className="!m-0 !rounded-none !border-0 flex-1 overflow-x-auto overflow-y-auto p-6 md:p-8">
                   <code className="text-[13px] leading-[1.8] text-[var(--code-text)]">
@@ -216,9 +289,12 @@ function SectionRenderer({
                   <div className="h-2.5 w-2.5 rounded-full bg-[var(--code-subtle)] opacity-50" />
                   <div className="h-2.5 w-2.5 rounded-full bg-[var(--code-subtle)] opacity-50" />
                 </div>
-                <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-[var(--text-subtle)]">
-                  {section.language}
-                </span>
+                <div className="flex items-center gap-3">
+                  <CopyButton text={section.code} />
+                  <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-[var(--text-subtle)]">
+                    {section.language}
+                  </span>
+                </div>
               </div>
               <pre className="!m-0 !rounded-none !border-0 overflow-x-auto p-6 md:p-8">
                 <code className="text-[13px] leading-[1.8] text-[var(--code-text)]">
@@ -291,8 +367,17 @@ export function CaseStudyContent({
   project: Project;
   nextProject?: { slug: string; title: string } | null;
 }) {
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+
   return (
     <article>
+      {/* Scroll progress */}
+      <motion.div
+        className="fixed left-0 right-0 top-0 z-50 h-[2px] origin-left bg-[var(--accent)]"
+        style={{ scaleX }}
+      />
+
       {/* Hero */}
       <section className="relative flex min-h-screen items-end overflow-hidden">
         <div className="absolute inset-0">

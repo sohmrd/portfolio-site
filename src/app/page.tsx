@@ -80,10 +80,20 @@ function ProjectShowcase({
                 src={project.thumbnail}
                 alt={project.title}
                 fill
-                className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                className={`transition-transform duration-700 ease-out group-hover:scale-[1.03] ${
+                  project.thumbnail.includes("lidar") ? "object-cover object-top" : "object-cover"
+                }`}
                 sizes="(max-width: 768px) 100vw, 90vw"
+                placeholder="blur"
+                blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyMCIgaGVpZ2h0PSIxMDgwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMxYTFhMWEiLz48L3N2Zz4="
               />
             </motion.div>
+          ) : project.visible ? (
+            <div className="flex h-full items-center justify-center bg-gradient-to-br from-[var(--surface)] to-[var(--background)]">
+              <span className="font-mono text-[11px] uppercase tracking-[0.3em] text-[var(--text-subtle)]">
+                {project.title}
+              </span>
+            </div>
           ) : (
             <div className="flex h-full items-center justify-center border border-[var(--border-color)] rounded-2xl bg-[var(--surface)]">
               <div className="text-center">
@@ -104,10 +114,10 @@ function ProjectShowcase({
       </div>
 
       {/* Info below image */}
-      <div className="mt-6 flex items-start justify-between gap-8 md:mt-8">
+      <div className="mt-6 flex items-start justify-between gap-8 transition-transform duration-500 ease-out group-hover:-translate-y-1 md:mt-8">
         <div className="flex-1">
           <div className="flex items-center gap-4">
-            <span className="font-mono text-sm tabular-nums text-[var(--text-subtle)]">
+            <span className="font-mono text-sm tabular-nums text-[var(--text-subtle)] transition-colors duration-300 group-hover:text-[var(--accent)]">
               {String(index + 1).padStart(2, "0")}
             </span>
             <h3
@@ -133,7 +143,7 @@ function ProjectShowcase({
           {project.tags.slice(0, 3).map((tag) => (
             <span
               key={tag}
-              className="rounded-full border border-[var(--border-color)] px-3 py-1 font-mono text-[10px] uppercase tracking-[0.1em] text-[var(--text-subtle)]"
+              className="rounded-full border border-[var(--border-color)] px-3 py-1 font-mono text-[10px] uppercase tracking-[0.1em] text-[var(--text-subtle)] transition-all duration-300 group-hover:border-[var(--accent)]/30 group-hover:text-[var(--text-muted)]"
             >
               {tag}
             </span>
@@ -158,8 +168,8 @@ export default function Home() {
     target: heroRef,
     offset: ["start start", "end start"],
   });
-  const heroOpacity = useTransform(heroProgress, [0, 0.7], [1, 0]);
-  const heroY = useTransform(heroProgress, [0, 0.7], ["0px", "-80px"]);
+  const heroOpacity = useTransform(heroProgress, [0, 0.5], [1, 0]);
+  const heroY = useTransform(heroProgress, [0, 0.5], ["0px", "-120px"]);
 
   return (
     <>
@@ -251,7 +261,7 @@ export default function Home() {
       </section>
 
       {/* Work — Large showcase cards */}
-      <section id="work" className="scroll-mt-24 px-6 pb-40 pt-32 lg:px-12 lg:pb-60 lg:pt-48">
+      <section id="work" className="scroll-mt-24 px-6 pb-40 pt-24 lg:px-12 lg:pb-60 lg:pt-36">
         <div className="mx-auto max-w-[var(--container-max)]">
           <FadeUp>
             <div className="flex items-end justify-between">
@@ -351,8 +361,9 @@ export default function Home() {
       </section>
 
       {/* Contact — Massive typography CTA */}
-      <section id="contact" className="scroll-mt-24 px-6 py-40 lg:px-12 lg:py-56">
-        <div className="mx-auto max-w-[var(--container-max)]">
+      <section id="contact" className="relative scroll-mt-24 px-6 py-40 lg:px-12 lg:py-56">
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-[var(--accent)]/[0.02] to-transparent" />
+        <div className="relative mx-auto max-w-[var(--container-max)]">
           <div className="divider" />
           <div className="py-28 text-center md:py-36">
             <FadeUp>
@@ -360,11 +371,18 @@ export default function Home() {
                 Get in touch
               </span>
             </FadeUp>
-            <FadeUp delay={0.1}>
-              <h2 className="mx-auto mt-8 max-w-3xl font-[family-name:var(--font-display)] text-5xl font-bold tracking-tight text-[var(--text)] md:text-7xl lg:text-8xl">
-                Let&apos;s build something together.
-              </h2>
-            </FadeUp>
+            <div className="mt-8">
+              <TextReveal delay={0.1}>
+                <h2 className="mx-auto max-w-3xl font-[family-name:var(--font-display)] text-5xl font-bold tracking-tight text-[var(--text)] md:text-7xl lg:text-8xl">
+                  Let&apos;s build something
+                </h2>
+              </TextReveal>
+              <TextReveal delay={0.25}>
+                <h2 className="mx-auto max-w-3xl font-[family-name:var(--font-display)] text-5xl font-bold tracking-tight text-[var(--text)] md:text-7xl lg:text-8xl">
+                  together.
+                </h2>
+              </TextReveal>
+            </div>
             <FadeUp delay={0.2}>
               <p className="mx-auto mt-6 max-w-md text-base leading-relaxed text-[var(--text-muted)]">
                 Targeting creative technologist, design engineer, and product
