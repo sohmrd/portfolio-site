@@ -208,58 +208,352 @@ int pumpSpeed(long intensity) {
     slug: "lidar-room-scanner",
     title: "LiDAR Garment Measurement",
     description:
-      "iOS app using iPhone LiDAR and computer vision to measure garments in 3D space.",
-    thumbnail: "/images/lidar/hero.jpg",
-    tags: ["iOS", "Swift", "ARKit", "LiDAR", "Computer Vision"],
+      "iOS app fusing LiDAR depth sensing with computer vision for real-time clothing measurement.",
+    thumbnail: "/images/lidar/hero-measurements.png",
+    tags: ["iOS", "Swift", "ARKit", "LiDAR", "Computer Vision", "Sensor Fusion"],
     summary:
-      "I built an iOS app that fuses iPhone LiDAR depth data with ARKit and the Vision framework to measure garment dimensions in real-time, exploring the boundary between on-device and cloud processing.",
+      "After hitting the limits of camera-only garment detection, I built an iOS app that fuses LiDAR depth data with computer vision edge detection to capture actual clothing dimensions. The system processes spatial data through a custom pipeline combining 2D image contours with 3D point clouds, applying camera intrinsics to convert pixel coordinates into metric measurements.",
     timeline: "2024-2025",
-    role: "Solo Developer",
+    role: "Solo Developer: All code, design, and product strategy",
     duration: "6 months",
-    tools: ["Swift", "ARKit", "Vision Framework", "SceneKit", "LiDAR"],
-    heroImage: "/images/lidar/hero.jpg",
-    sections: [],
+    tools: ["Swift", "ARKit", "Vision Framework", "SceneKit", "LiDAR APIs", "Xcode", "TestFlight"],
+    heroImage: "/images/lidar/hero-measurements.png",
+    sections: [
+      {
+        heading: "The Challenge",
+        type: "standard",
+        content:
+          "After building a camera-only clothing detection system with YOLO, I hit a wall: computer vision could identify garments but could not measure them. I needed depth data. The iPhone Pro's LiDAR scanner provided 3D sensing, but the core problem became data fusion: how do you combine 2D edge detection (which understands shape boundaries) with 3D depth maps (which understand distance) to extract real garment dimensions like chest width, shoulder span, and inseam? Neither sensor alone was sufficient.",
+        images: ["/images/lidar/capture-view.png", "/images/lidar/capture-error.png"],
+      },
+      {
+        heading: "The Stack",
+        type: "stack",
+        content:
+          "The system architecture combines sensor hardware with Apple's spatial computing frameworks. Hardware capabilities provide raw data streams, while software frameworks handle coordinate transformations, scene understanding, and computational geometry.",
+        hardware: [
+          "iPhone 12 Pro+ LiDAR Scanner (5m range, scene depth)",
+          "TrueDepth Camera (12MP, 60fps capture)",
+          "IMU (6-axis gyroscope/accelerometer for transforms)",
+        ],
+        software: [
+          "ARKit (world tracking, scene reconstruction)",
+          "Vision Framework (VNDetectContoursRequest for edge detection)",
+          "SceneKit (3D rendering and point cloud visualization)",
+          "Swift SIMD (matrix calculations, camera intrinsics)",
+        ],
+      },
+      {
+        heading: "The Logic",
+        type: "code",
+        content:
+          "The core measurement algorithm uses pinhole camera model projection to convert 2D garment outline coordinates into 3D camera space. This function maps edge detection points along clothing boundaries to real-world positions by applying camera intrinsics and depth data. The intrinsics matrix (fx, fy, cx, cy) encodes the camera's optical properties, allowing accurate transformation from pixel space to metric garment dimensions.",
+        language: "Swift",
+        code: `/// Project 2D outline points to 3D camera space
+/// using ARKit depth data and pinhole camera model
+private func projectToCameraSpace(
+    outlinePoints: [CGPoint],
+    depthMap: CVPixelBuffer,
+    intrinsics: simd_float3x3,
+    imageSize: CGSize
+) -> [SIMD3<Float>] {
+    let fx = intrinsics.columns.0.x  // focal length x
+    let fy = intrinsics.columns.1.y  // focal length y
+    let cx = intrinsics.columns.2.x  // principal point x
+    let cy = intrinsics.columns.2.y  // principal point y
+
+    let depthWidth = CVPixelBufferGetWidth(depthMap)
+    let depthHeight = CVPixelBufferGetHeight(depthMap)
+
+    let cameraSpacePoints = outlinePoints.compactMap {
+        point -> SIMD3<Float>? in
+        let depthX = Int(Float(point.x)
+            * Float(depthWidth) / Float(imageSize.width))
+        let depthY = Int(Float(point.y)
+            * Float(depthHeight) / Float(imageSize.height))
+
+        guard depthX >= 0 && depthX < depthWidth
+           && depthY >= 0 && depthY < depthHeight
+        else { return nil }
+
+        let depth = getDepth(at: depthX, depthY, from: depthMap)
+        guard depth > 0 && depth < 5.0 else { return nil }
+
+        // Pinhole model: pixel -> real-world coordinates
+        let scaledFx = fx * Float(depthWidth)
+            / Float(imageSize.width)
+        let scaledFy = fy * Float(depthHeight)
+            / Float(imageSize.height)
+        let scaledCx = cx * Float(depthWidth)
+            / Float(imageSize.width)
+        let scaledCy = cy * Float(depthHeight)
+            / Float(imageSize.height)
+
+        let cameraX = (Float(depthX) - scaledCx)
+            * depth / scaledFx
+        let cameraY = (Float(depthY) - scaledCy)
+            * depth / scaledFy
+
+        return SIMD3<Float>(cameraX, cameraY, depth)
+    }
+    return cameraSpacePoints
+}`,
+      },
+      {
+        heading: "The Detection Pipeline",
+        type: "standard",
+        content:
+          "The measurement pipeline executes as a multi-stage cascade with fallback strategies. First, I attempt hybrid CV+LiDAR detection using Vision framework contour detection to outline the garment, refined with depth clustering to isolate it from the background. If edge detection fails (wrinkled fabric, poor lighting, textured surfaces), the system falls back to pure depth-based segmentation. Each detection method feeds into the same 3D projection and measurement calculation, extracting chest width, body length, shoulder width, waist, front rise, and inseam depending on garment type.",
+      },
+      {
+        heading: "Failure Log",
+        type: "failure",
+        content:
+          "Each iteration revealed fundamental limitations in on-device computer vision processing.",
+        images: ["/images/lidar/firework-contours.png", "/images/lidar/contour-detection.png", "/images/lidar/dark-shirt-error.png"],
+        iterations: [
+          {
+            version: "v1: Vision Framework Edge Detection",
+            issue:
+              "VNDetectContoursRequest produced 'firework patterns' with hundreds of scattered line segments radiating from fabric edges instead of clean garment outlines. The Vision framework detected every texture variation, fold, and wrinkle as a potential contour.",
+            fix: "Implemented Douglas-Peucker algorithm to simplify contours, combined with bounding box filtering and aspect ratio validation. Added depth-based refinement that searches perpendicular to detected edges to snap contour points to the actual object surface using a 15cm depth threshold.",
+          },
+          {
+            version: "v2: Depth Clustering Accuracy",
+            issue:
+              "Pure LiDAR segmentation captured the general garment shape but missed fine details like sleeve curves and necklines. Median depth clustering created blocky, quantized outlines that lost measurement accuracy on clothing's complex, non-rigid geometry.",
+            fix: "Built hybrid refinement pipeline: Vision framework detects initial shape, then LiDAR data refines boundary precision. For each edge point, I sample depths along the perpendicular direction and select the point closest to median object depth.",
+          },
+          {
+            version: "v3: On-Device Processing Limitations",
+            issue:
+              "iPhone Vision framework could not match the robustness of server-side OpenCV libraries. Edge detection failed on many real-world clothing scenarios: patterned fabrics, similar-colored backgrounds, wrinkled or draped garments.",
+            fix: "Identified this as a fundamental architecture decision. The correct solution would be moving CV processing to a Python backend and keeping only LiDAR capture + 3D projection on-device. Chose not to implement due to cloud compute costs for a personal project.",
+          },
+        ],
+      },
+      {
+        heading: "The Outcome",
+        type: "standard",
+        content:
+          "The app runs the complete pipeline: point the camera at a garment, and it detects boundaries, projects to 3D space, and outputs measurements. In controlled conditions (solid-colored clothing, even lighting, flat surface), it produces reasonable dimensional estimates. In real-world conditions, edge detection breaks down on patterned or wrinkled fabrics. The honest conclusion: on-device Vision framework cannot match server-side OpenCV for this use case, and the correct architecture would offload CV processing to a Python backend while keeping only LiDAR capture on-device. That architectural insight, knowing where to split the pipeline between edge and cloud, was the most valuable outcome of six months of building.",
+        images: ["/images/lidar/hero-measurements.png"],
+      },
+    ],
     tier: 1,
     featured: true,
-    visible: false,
+    visible: true,
   },
   {
     slug: "cv-clothing",
     title: "Computer Vision Fashion Detection",
     description:
-      "YOLOv11 pipeline trained to detect and classify 10 garment types from images in real time.",
-    thumbnail: "/images/cv/hero.jpg",
-    tags: ["Python", "PyTorch", "YOLOv11", "Computer Vision", "ML Engineering"],
+      "Real-time clothing detection and classification across 10 garment categories using YOLOv11.",
+    thumbnail: "/images/cv-clothing/hero-detection.png",
+    tags: ["Python", "PyTorch", "YOLOv11", "Computer Vision", "ML Engineering", "OpenCV"],
     summary:
-      "I built a complete object detection pipeline using YOLOv11 to identify and classify clothing items across 10 garment categories, training on Kaggle datasets with custom data augmentation.",
+      "I built a continuous machine learning system for real-time fashion detection across 10 garment categories. Trained custom YOLOv11 models on Kaggle fashion datasets with multi-device GPU support (Apple Silicon MPS, NVIDIA CUDA, CPU) and deployed real-time inference with combined detection and pose estimation.",
     timeline: "2024",
-    role: "ML Engineer",
-    duration: "3 months",
-    tools: ["Python", "PyTorch", "YOLOv11", "OpenCV", "Google Colab"],
-    heroImage: "/images/cv/hero.jpg",
-    sections: [],
+    role: "Solo Developer: Training pipeline, model evaluation, real-time inference",
+    duration: "2 months",
+    tools: ["Python", "YOLOv11 (Ultralytics)", "PyTorch", "OpenCV", "Google Colab", "Kaggle", "Jupyter Notebooks"],
+    heroImage: "/images/cv-clothing/hero-detection.png",
+    sections: [
+      {
+        heading: "The Challenge",
+        type: "standard",
+        content:
+          "I set out to build a real-time clothing detection system that could identify what garment someone is wearing, where it is in the frame, and classify it by type. The core challenge split into two problems: sourcing quality labeled fashion data (Kaggle had garment type labels but almost nothing for style attributes), and building a training pipeline that could run on consumer hardware without requiring expensive cloud GPU time for every iteration.",
+      },
+      {
+        heading: "The Stack",
+        type: "stack",
+        content:
+          "The system uses YOLOv11 for detection, PyTorch as the ML framework, and OpenCV for video processing. Training runs on Google Colab for cloud GPU access, with local fallback support for Apple Silicon (MPS), NVIDIA (CUDA), or CPU.",
+        hardware: [],
+        software: [
+          "Python 3.12",
+          "YOLOv11 (Ultralytics)",
+          "PyTorch (MPS / CUDA / CPU)",
+          "OpenCV (real-time video processing)",
+          "Google Colab (cloud GPU training)",
+          "Kaggle Datasets (10 garment classes)",
+          "Jupyter Notebooks (experimentation)",
+        ],
+      },
+      {
+        heading: "The Logic",
+        type: "code",
+        content:
+          "The training script handles automatic device detection (MPS for Apple Silicon, CUDA for NVIDIA, or CPU fallback), checkpoint management to avoid redundant training, and model validation with mAP metrics. This architecture allows seamless fashion model training across different hardware environments without code changes.",
+        language: "Python",
+        code: `def check_device():
+    """Check available GPU: MPS, CUDA, or CPU."""
+    if torch.backends.mps.is_available():
+        device = "mps"
+        print(f"[INFO] Using Apple M1/M2 GPU (MPS)")
+    elif torch.cuda.is_available():
+        device = "cuda"
+        print(f"Using torch {torch.__version__} "
+              f"({torch.cuda.get_device_properties(0).name})")
+    else:
+        device = "cpu"
+        print(f"[WARNING] Using torch {torch.__version__} "
+              f"(CPU - slow)")
+    return device
+
+def train_fashion_model():
+    """Train with checkpoint management."""
+    if TRAINED_MODEL_PATH.exists():
+        print(f"[INFO] Trained model found at: "
+              f"{TRAINED_MODEL_PATH}")
+        return YOLO(str(TRAINED_MODEL_PATH))
+
+    device = check_device()
+    model = YOLO(PRETRAINED_MODEL)
+
+    results = model.train(
+        data=str(DATA_YAML),
+        epochs=EPOCHS,
+        batch=BATCH_SIZE,
+        imgsz=IMG_SIZE,
+        device=device,
+        patience=50,
+        save=True,
+        plots=True,
+        val=True,
+        amp=False if device == "mps" else True
+    )
+
+    best_weights = (PROJECT_ROOT / "runs" / "detect"
+        / "fashion_training" / "weights" / "best.pt")
+    shutil.copy(best_weights, TRAINED_MODEL_PATH)
+    return model`,
+      },
+      {
+        heading: "Failure Log",
+        type: "failure",
+        content:
+          "Three critical iterations shaped the final architecture.",
+        iterations: [
+          {
+            version: "v1: TensorFlow on Mac",
+            issue:
+              "Started training with TensorFlow on a MacBook Pro but consistently ran out of RAM during model training. Local training would crash after a few epochs, making iteration impossible.",
+            fix: "Migrated to Google Colab for cloud GPU access and switched to PyTorch/YOLOv11. This gave me access to high-memory GPUs and faster training cycles. Kept local inference capability for deployment.",
+          },
+          {
+            version: "v2: Real-time Performance",
+            issue:
+              "Real-time webcam inference was stuttering badly on the local machine. Frame rate dropped below usable levels with full-resolution frames.",
+            fix: "Downscaled video output resolution and optimized the inference loop. Reduced display resolution while maintaining model input size, achieving smooth real-time detection.",
+          },
+          {
+            version: "v3: Dataset Limitations",
+            issue:
+              "Public Kaggle datasets provided good garment type labels but lacked fine-grained style attribute data. This limited what the model could classify beyond basic clothing categories.",
+            fix: "Accepted limitation for proof of concept. For production, would need to build a proprietary dataset from user-generated data with custom attribute labeling.",
+          },
+        ],
+      },
+      {
+        heading: "The Outcome",
+        type: "standard",
+        content:
+          "The final system trains in Colab and runs real-time inference locally via terminal, with clothing classification and human pose estimation running simultaneously on a webcam feed, identifying garment types with bounding boxes and confidence scores. The model detects 10 garment classes (jacket, shirt, pants, dress, skirt, shorts, hat, sunglasses, bag, shoe) reliably in well-lit environments, though style attribute classification remains unsolved without better training data. This project built my foundation in ML engineering: PyTorch training pipelines, cloud compute workflows, and the gap between 'model works in a notebook' and 'model runs in real-time on live video.'",
+        images: ["/images/cv-clothing/hero-detection.png", "/images/cv-clothing/webcam-detection.png"],
+      },
+    ],
     tier: 1,
     featured: true,
-    visible: false,
+    visible: true,
   },
   {
     slug: "alivecor",
     title: "AliveCor Product Development",
     description:
-      "Product strategy and configuration audit for a medical AI company making FDA-cleared ECG devices.",
+      "Audited and redesigned the clinical configuration system for an AI-driven remote heart monitoring platform.",
     thumbnail: "/images/alivecor/hero.jpg",
-    tags: ["Product Strategy", "Medical AI", "User Research", "Figma"],
+    tags: ["Product Strategy", "Medical AI", "UX Design", "Figma", "Cross-functional"],
     summary:
-      "As a Featured Intern at AliveCor, I led a device configuration audit and developed a D2C product strategy based on cross-functional research with hardware, ML, and customer success teams.",
+      "As Featured Intern at AliveCor, I mapped every setting interaction in the clinical platform through systematic testing, discovered hidden dependencies across the system, and designed self-service configuration flows that reduced setup complexity for clinical users.",
     timeline: "2024",
-    role: "Product Development Intern",
-    duration: "3 months",
-    tools: ["Figma", "Jira", "Confluence", "Arduino", "Google Suite"],
+    role: "Product Development Intern (Featured Intern)",
+    duration: "3 months (Summer 2024)",
+    tools: ["Figma", "Jira", "Confluence", "Arduino", "Premiere Pro", "Google Suite"],
     heroImage: "/images/alivecor/hero.jpg",
-    sections: [],
+    sections: [
+      {
+        heading: "The Challenge",
+        type: "standard",
+        content:
+          "AliveCor's remote heart monitoring platform serves both direct patient care and clinical studies, but the clinical-facing configuration system had grown organically over years without proper documentation. Healthcare professionals struggled with settings that had hidden interdependencies, and the engineering team kept shipping features without edge-case testing. No one on the team had a complete map of how the system actually behaved. I was tasked with auditing the entire configuration system, documenting its real behavior, and redesigning the interface to simplify clinical onboarding.",
+      },
+      {
+        heading: "Cross-functional Research",
+        type: "standard",
+        content:
+          "The configuration system touched every team, so I embedded with each one to understand their piece of the pipeline. With hardware engineers, I used Arduino boards to mimic ECG device signals for testing without clinical equipment. With the ML team, I learned how model outputs drove configuration requirements, specifically which settings affected data quality and which were cosmetic. With customer success and sales, I mapped real-world deployment contexts to understand which configurations clinical staff actually changed vs. which they left at defaults. This cross-functional mapping revealed where the system could be simplified.",
+      },
+      {
+        heading: "The Stack",
+        type: "stack",
+        content:
+          "I used Figma for interface redesign and prototyping the simplified configuration flows, Jira for sprint planning, and Confluence for the system documentation I created from scratch. Arduino boards simulated device signals for testing edge cases without clinical hardware.",
+        hardware: [
+          "Arduino (device signal simulation)",
+          "AliveCor ECG hardware (testing)",
+        ],
+        software: [
+          "Figma (interface redesign, prototyping)",
+          "Jira (sprint planning)",
+          "Confluence (system documentation)",
+          "Google Sheets (dependency mapping)",
+          "Premiere Pro (handoff video walkthroughs)",
+        ],
+      },
+      {
+        heading: "Failure Log",
+        type: "failure",
+        content:
+          "The iterations and obstacles that shaped the final solution.",
+        iterations: [
+          {
+            version: "v1: Configuration Audit",
+            issue:
+              "Started by asking engineers to document settings, but their knowledge was fragmented and contradictory. No one had a complete map of how configurations interacted. I discovered 'ghost dependencies' where changing one setting silently affected others.",
+            fix: "Switched to systematic manual testing. Created test scenarios for every setting combination, building the source of truth from scratch. This audit became the foundation for designing which configurations could be automated.",
+          },
+          {
+            version: "v2: Redesign Assumptions",
+            issue:
+              "Initial redesign assumed clinical staff understood the underlying system architecture. Figma prototype testing revealed they needed context-specific defaults, not a better-organized version of the same complexity.",
+            fix: "Redesigned around deployment-context presets (patient monitoring vs. clinical trial) that pre-configure appropriate settings. The Figma prototype reduced required user decisions from 20+ to under 5 for standard deployments.",
+          },
+          {
+            version: "v3: Implementation Handoff",
+            issue:
+              "Delivered the complete audit, documentation, and Figma redesign on schedule, but engineering implementation was scheduled after the internship ended.",
+            fix: "Created detailed handoff documentation and recorded video walkthroughs. Scheduled follow-up calls post-internship to support the engineering team during implementation.",
+          },
+        ],
+      },
+      {
+        heading: "D2C Strategy",
+        type: "standard",
+        content:
+          "Beyond the platform redesign, I conducted user research to inform direct-to-consumer strategy. Interviews revealed that monitoring loved ones' health was a top motivator for platform adoption, particularly for families managing chronic conditions. I synthesized these findings into a subscription tier strategy proposal and presented it at the company's internal pitch day. The proposal modeled a path to 50% D2C market penetration growth over two years based on the adoption patterns I identified in the research.",
+      },
+      {
+        heading: "The Outcome",
+        type: "standard",
+        content:
+          "As Featured Intern, I delivered five artifacts: a complete configuration audit documenting every setting and its dependencies, a ghost dependency map that exposed bugs no one knew existed, a simplified Figma redesign of the clinical interface, comprehensive platform documentation (the first the team had), and a D2C strategy proposal with subscription tier modeling. The redesign and documentation were handed off to engineering for implementation after my internship. The most valuable skill I took away was learning to operate across hardware, ML, and UX teams simultaneously, translating between engineers who spoke in signal fidelity and clinicians who spoke in patient outcomes.",
+      },
+    ],
     tier: 1,
     featured: true,
-    visible: false,
+    visible: true,
   },
 ];
 
