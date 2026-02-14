@@ -34,8 +34,8 @@ function ProjectShowcase({
   const mouseX = useMotionValue(0.5);
   const mouseY = useMotionValue(0.5);
   const tiltSpring = { stiffness: 200, damping: 30 };
-  const rawRotateX = useTransform(mouseY, [0, 1], [10, -10]);
-  const rawRotateY = useTransform(mouseX, [0, 1], [-10, 10]);
+  const rawRotateX = useTransform(mouseY, [0, 1], [5, -5]);
+  const rawRotateY = useTransform(mouseX, [0, 1], [-5, 5]);
   const rotateX = useSpring(rawRotateX, tiltSpring);
   const rotateY = useSpring(rawRotateY, tiltSpring);
 
