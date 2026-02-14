@@ -39,9 +39,10 @@ function ProjectShowcase({
   const rotateX = useSpring(rawRotateX, tiltSpring);
   const rotateY = useSpring(rawRotateY, tiltSpring);
 
+  const imageRef = useRef<HTMLDivElement>(null);
   const handleTiltMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current || prefersReduced || isComingSoon) return;
-    const rect = cardRef.current.getBoundingClientRect();
+    if (!imageRef.current || prefersReduced || isComingSoon) return;
+    const rect = imageRef.current.getBoundingClientRect();
     mouseX.set((e.clientX - rect.left) / rect.width);
     mouseY.set((e.clientY - rect.top) / rect.height);
   };
@@ -53,21 +54,25 @@ function ProjectShowcase({
   const content = (
     <motion.div
       ref={cardRef}
-      onMouseMove={handleTiltMove}
-      onMouseLeave={handleTiltLeave}
       initial={{ opacity: 0, y: 60 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.9, ease }}
-      style={
-        prefersReduced || isComingSoon
-          ? undefined
-          : { rotateX, rotateY, transformStyle: "preserve-3d" }
-      }
       className={`group ${isComingSoon ? "pointer-events-none" : ""}`}
     >
       {/* Image */}
-      <div className="relative overflow-hidden rounded-2xl bg-[var(--surface)] transition-shadow duration-500 group-hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)]">
+      <div style={{ perspective: 1200 }}>
+      <motion.div
+        ref={imageRef}
+        onMouseMove={handleTiltMove}
+        onMouseLeave={handleTiltLeave}
+        style={
+          prefersReduced || isComingSoon
+            ? undefined
+            : { rotateX, rotateY, transformStyle: "preserve-3d" }
+        }
+        className="relative overflow-hidden rounded-2xl bg-[var(--surface)] transition-shadow duration-500 group-hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)]"
+      >
         <div className="relative aspect-[16/9] overflow-hidden lg:aspect-[21/9]">
           {project.thumbnail && !isComingSoon ? (
             <motion.div className="absolute inset-[-8%]" style={{ y: imageY }}>
@@ -95,6 +100,7 @@ function ProjectShowcase({
             <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)]/60 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
           )}
         </div>
+      </motion.div>
       </div>
 
       {/* Info below image */}
@@ -140,11 +146,9 @@ function ProjectShowcase({
   if (isComingSoon) return <div>{content}</div>;
 
   return (
-    <div style={{ perspective: 1200 }}>
-      <Link href={`/work/${project.slug}`} className="block">
-        {content}
-      </Link>
-    </div>
+    <Link href={`/work/${project.slug}`} className="block">
+      {content}
+    </Link>
   );
 }
 
