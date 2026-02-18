@@ -14,19 +14,13 @@ interface SlideViewerProps {
 
 const slideVariants = {
   enter: (direction: number) => ({
-    x: direction > 0 ? "35%" : "-35%",
-    opacity: 0,
-    scale: 0.96,
+    x: direction > 0 ? "100%" : "-100%",
   }),
   center: {
-    x: 0,
-    opacity: 1,
-    scale: 1,
+    x: "0%",
   },
   exit: (direction: number) => ({
-    x: direction > 0 ? "-35%" : "35%",
-    opacity: 0,
-    scale: 0.96,
+    x: direction > 0 ? "-100%" : "100%",
   }),
 };
 
@@ -205,7 +199,7 @@ export function SlideViewer({ slides, alt = "Slide" }: SlideViewerProps) {
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          <AnimatePresence initial={false} custom={direction} mode="popLayout">
+          <AnimatePresence initial={false} custom={direction} mode="sync">
             <motion.div
               key={current}
               custom={direction}
