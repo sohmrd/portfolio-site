@@ -12,6 +12,13 @@ const allProjects = getAllVisibleProjects();
 const categories: { label: string; match: (tags: string[]) => boolean }[] = [
   { label: "All", match: () => true },
   {
+    label: "AI / ML",
+    match: (tags) =>
+      tags.some((t) =>
+        ["Computer Vision", "ML Engineering", "PyTorch", "YOLOv11", "Medical AI", "TensorFlow", "NLP"].includes(t),
+      ),
+  },
+  {
     label: "Hardware",
     match: (tags) =>
       tags.some((t) =>
@@ -23,13 +30,6 @@ const categories: { label: string; match: (tags: string[]) => boolean }[] = [
     match: (tags) =>
       tags.some((t) =>
         ["Swift", "iOS", "Python", "React", "TypeScript", "ARKit"].includes(t),
-      ),
-  },
-  {
-    label: "ML / CV",
-    match: (tags) =>
-      tags.some((t) =>
-        ["Computer Vision", "ML Engineering", "PyTorch", "YOLOv11", "Medical AI", "TensorFlow"].includes(t),
       ),
   },
   {

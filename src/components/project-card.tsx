@@ -27,8 +27,8 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
         },
       }}
       whileHover={isComingSoon ? {} : { y: -4 }}
-      className={`group relative flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border-color)] bg-[var(--surface)] transition-colors ${
-        isComingSoon ? "opacity-60" : "hover:border-[var(--accent)]/30"
+      className={`group relative flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border-color)] bg-[var(--surface)] transition-all duration-500 ${
+        isComingSoon ? "opacity-60" : "hover:border-[var(--accent)]/30 hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)]"
       }`}
     >
       {/* Image */}
