@@ -30,6 +30,80 @@ const slideVariants = {
   }),
 };
 
+/* ── Dot with hover preview ────────────────────────────────────────── */
+function DotWithPreview({
+  index,
+  isCurrent,
+  slide,
+  alt,
+  onClick,
+}: {
+  index: number;
+  isCurrent: boolean;
+  slide: string;
+  alt: string;
+  onClick: () => void;
+}) {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className="relative flex h-4 items-center"
+      aria-label={`Go to slide ${index + 1}`}
+    >
+      {/* Preview tooltip */}
+      <AnimatePresence>
+        {hovered && (
+          <motion.div
+            initial={{ opacity: 0, y: 4, scale: 0.92 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 4, scale: 0.92 }}
+            transition={{ duration: 0.2, ease: [0.32, 0.72, 0, 1] }}
+            className="pointer-events-none absolute bottom-full left-1/2 z-30 mb-3 -translate-x-1/2"
+          >
+            <div className="overflow-hidden rounded-lg border border-[var(--border-color)] bg-[var(--surface)] shadow-lg">
+              <div className="relative h-[72px] w-[128px]">
+                <Image
+                  src={slide}
+                  alt={`${alt} ${index + 1} preview`}
+                  fill
+                  className="object-contain"
+                  sizes="128px"
+                />
+              </div>
+              <div className="border-t border-[var(--border-color)] px-2 py-1">
+                <span className="block text-center font-mono text-[9px] tabular-nums text-[var(--text-subtle)]">
+                  {index + 1}
+                </span>
+              </div>
+            </div>
+            {/* Arrow */}
+            <div className="absolute left-1/2 top-full -translate-x-1/2">
+              <div className="h-0 w-0 border-x-[5px] border-t-[5px] border-x-transparent border-t-[var(--border-color)]" />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Dot */}
+      <motion.div
+        className="h-1.5 rounded-full"
+        animate={{
+          width: isCurrent ? 16 : 6,
+          backgroundColor: isCurrent
+            ? "var(--accent)"
+            : "color-mix(in srgb, var(--text-subtle) 40%, transparent)",
+        }}
+        transition={{ type: "spring", stiffness: 300, damping: 25 }}
+      />
+    </button>
+  );
+}
+
+/* ── Main slide viewer ─────────────────────────────────────────────── */
 export function SlideViewer({ slides, alt = "Slide" }: SlideViewerProps) {
   const [[current, direction], setSlide] = useState([0, 0]);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -78,7 +152,7 @@ export function SlideViewer({ slides, alt = "Slide" }: SlideViewerProps) {
       <div
         ref={containerRef}
         tabIndex={0}
-        className="group relative overflow-hidden rounded-2xl border border-[var(--border-color)] bg-[var(--surface)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+        className="group relative rounded-2xl border border-[var(--border-color)] bg-[var(--surface)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
       >
         {/* Slide area */}
         <div className="relative aspect-[16/9] overflow-hidden">
@@ -105,7 +179,7 @@ export function SlideViewer({ slides, alt = "Slide" }: SlideViewerProps) {
           </AnimatePresence>
         </div>
 
-        {/* Prev / Next arrows - CSS group-hover for visibility, Framer for tap */}
+        {/* Prev / Next arrows */}
         {slides.length > 1 && (
           <>
             <motion.button
@@ -133,7 +207,7 @@ export function SlideViewer({ slides, alt = "Slide" }: SlideViewerProps) {
           </>
         )}
 
-        {/* Bottom bar: animated page counter + spring dot indicators */}
+        {/* Bottom bar: page counter + dots with preview */}
         {slides.length > 1 && (
           <div className="flex items-center justify-between border-t border-[var(--border-color)] px-5 py-3">
             <div className="relative h-4 overflow-hidden">
@@ -151,24 +225,15 @@ export function SlideViewer({ slides, alt = "Slide" }: SlideViewerProps) {
               </AnimatePresence>
             </div>
             <div className="flex items-center gap-1.5">
-              {slides.map((_, i) => (
-                <button
+              {slides.map((slide, i) => (
+                <DotWithPreview
                   key={i}
+                  index={i}
+                  isCurrent={i === current}
+                  slide={slide}
+                  alt={alt}
                   onClick={() => goTo(i)}
-                  className="flex h-4 items-center"
-                  aria-label={`Go to slide ${i + 1}`}
-                >
-                  <motion.div
-                    className="h-1.5 rounded-full"
-                    animate={{
-                      width: i === current ? 16 : 6,
-                      backgroundColor: i === current
-                        ? "var(--accent)"
-                        : "color-mix(in srgb, var(--text-subtle) 40%, transparent)",
-                    }}
-                    transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                  />
-                </button>
+                />
               ))}
             </div>
           </div>
