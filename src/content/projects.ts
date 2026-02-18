@@ -26,6 +26,7 @@ export interface Project {
   duration: string;
   tools: string[];
   team?: string;
+  github?: string;
   heroImage: string;
   sections: Section[];
   tier: 1 | 2 | 3;
@@ -566,6 +567,7 @@ def train_fashion_model():
     summary:
       "I built a context-aware text prediction system that trains independent trigram language models on personal, work, and hobby messaging data, then uses a backoff scoring algorithm with softmax normalization to detect which context you are typing in and suggest the most likely next words from the right model.",
     timeline: "2025",
+    github: "https://github.com/sohmrd/Multi-Context-N-Gram-Text-Generation",
     role: "Solo Developer",
     duration: "3 weeks",
     tools: ["Python", "NumPy", "Jupyter Notebooks", "ipywidgets", "Pickle", "Matplotlib"],
