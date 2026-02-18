@@ -14,34 +14,50 @@ const experience = [
   },
   {
     company: "AliveCor",
-    context: "Internship",
+    context: "Mountain View, CA",
     role: "Product Development Intern",
     period: "2024",
     description:
-      "Ran a device configuration audit across the KardiaMobile product line, developed a D2C strategy, and shipped 5 deliverables spanning hardware, ML, and customer success.",
+      "Featured Intern. Designed AI-driven self-service and automated device configurations projected to increase D2C market penetration by 50%. Collaborated across industrial design, hardware, and ML engineering teams to optimize physical sensor design for low-cost, high-fidelity data acquisition.",
+  },
+  {
+    company: "Marche Health",
+    context: "Menlo Park, CA",
+    role: "UX / Marketing Intern",
+    period: "2023",
+    description:
+      "Designed and optimized a healthcare job platform for life sciences buyers. Collaborated with a UX/UI designer to refine workflows and streamline the interface, reducing click-throughs by 20%.",
   },
   {
     company: "HP Inc.",
-    context: "Internship",
+    context: "Palo Alto, CA",
     role: "Product Design Intern",
-    period: "2023",
+    period: "2020",
     description:
-      "Industrial design work on consumer products. Contributed to form factor exploration and rapid prototyping for the personal systems division.",
+      "Designed and prototyped a calendar optimization tool for remote workers targeting 15% higher productivity. Collaborated with HP lead designers, developed hardware and software concepts, and presented to the full design team.",
+  },
+  {
+    company: "Cyara",
+    context: "Redwood City, CA",
+    role: "Sales & Marketing Intern",
+    period: "2018",
+    description:
+      "Analyzed market opportunities and conducted lead tracking under the VP of Marketing. Proposed a growth strategy and quarterly plan to drive a 60% revenue increase by entering new markets.",
   },
 ];
 
 const skills = [
   {
     category: "Design",
-    items: ["Industrial Design", "User Research", "SolidWorks / Fusion 360", "Prototyping", "Figma", "Adobe Suite"],
+    items: ["Industrial Design", "User Research", "SolidWorks / Fusion 360", "Rapid Prototyping", "Figma", "Adobe Creative Cloud"],
   },
   {
     category: "Software",
-    items: ["Python / PyTorch", "Swift / SwiftUI", "TypeScript / React", "C++ / Arduino", "Computer Vision", "ARKit"],
+    items: ["Python / PyTorch / TensorFlow", "Swift / SwiftUI", "TypeScript / React", "C/C++ / Java", "Computer Vision (YOLO)", "ARKit / Sensor Fusion"],
   },
   {
     category: "Hardware",
-    items: ["Embedded Systems", "BLE / IoT", "Sensor Fusion", "3D Printing", "PCB Design", "LiDAR"],
+    items: ["Embedded Systems", "BLE / IoT / Arduino", "3D Printing / CNC", "Laser Cutting", "PCB Design", "LiDAR"],
   },
 ];
 
@@ -91,9 +107,11 @@ export default function AboutPage() {
             <p>
               My work sits at the intersection of physical product design and
               real software engineering. I have built Bluetooth-connected
-              consumer devices for Coca-Cola, run product strategy at a medical
-              AI company, trained computer vision models for fashion detection,
-              and developed spatial computing apps with iPhone LiDAR.
+              consumer devices for Coca-Cola, designed AI-driven configurations at
+              AliveCor, trained computer vision models for fashion detection,
+              and developed spatial computing apps with iPhone LiDAR. Before
+              college, I co-founded AI Square, a crowdsourced AI research
+              platform, and studied product design at the Stanford d.school.
             </p>
           </motion.div>
         </div>
@@ -130,8 +148,22 @@ export default function AboutPage() {
                   CS Threads: Intelligence, Devices
                 </p>
                 <p className="mt-1 text-sm text-[var(--text-subtle)]">
-                  Expected Spring 2026
+                  Expected Dec 2025 / Spring 2026
                 </p>
+
+                <div className="mt-8 space-y-3 border-t border-[var(--border-color)] pt-6">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--text-subtle)]">
+                    Certificate Programs
+                  </p>
+                  <p className="text-sm text-[var(--text-muted)]">
+                    Stanford d.school, Product Design
+                    <span className="ml-2 text-[var(--text-subtle)]">2018</span>
+                  </p>
+                  <p className="text-sm text-[var(--text-muted)]">
+                    UC Berkeley, Environmental Design
+                    <span className="ml-2 text-[var(--text-subtle)]">2019</span>
+                  </p>
+                </div>
               </FadeUp>
             </div>
 
