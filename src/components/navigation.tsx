@@ -6,7 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const links = [
-  { href: "/", label: "Work" },
+  { href: "/work", label: "Work" },
   { href: "/about", label: "About" },
 ];
 
@@ -47,26 +47,32 @@ export function Navigation() {
 
           {/* Desktop nav */}
           <div className="hidden items-center gap-10 md:flex">
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`relative text-[13px] font-medium tracking-wide transition-colors ${
-                  pathname === link.href
-                    ? "text-[var(--text)]"
-                    : "text-[var(--text-subtle)] hover:text-[var(--text-muted)]"
-                }`}
-              >
-                {link.label}
-                {pathname === link.href && (
-                  <motion.span
-                    layoutId="nav-indicator"
-                    className="absolute -bottom-1.5 left-0 right-0 h-px bg-[var(--accent)]"
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  />
-                )}
-              </Link>
-            ))}
+            {links.map((link) => {
+              const isActive =
+                link.href === "/work"
+                  ? pathname.startsWith("/work")
+                  : pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`relative text-[13px] font-medium tracking-wide transition-colors ${
+                    isActive
+                      ? "text-[var(--text)]"
+                      : "text-[var(--text-subtle)] hover:text-[var(--text-muted)]"
+                  }`}
+                >
+                  {link.label}
+                  {isActive && (
+                    <motion.span
+                      layoutId="nav-indicator"
+                      className="absolute -bottom-1.5 left-0 right-0 h-px bg-[var(--accent)]"
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                </Link>
+              );
+            })}
             <a
               href="mailto:sohmdubey@gmail.com"
               className="text-[13px] font-medium text-[var(--text-subtle)] transition-colors hover:text-[var(--accent)]"
@@ -128,26 +134,32 @@ export function Navigation() {
           >
             <div className="flex flex-1 flex-col justify-center px-12">
               <nav className="space-y-2">
-                {links.map((link, i) => (
-                  <motion.div
-                    key={link.href}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ delay: i * 0.1, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-                  >
-                    <Link
-                      href={link.href}
-                      className={`block py-3 font-[family-name:var(--font-display)] text-[clamp(2rem,8vw,3.5rem)] font-bold leading-[1.1] tracking-tight transition-colors ${
-                        pathname === link.href
-                          ? "text-[var(--text)]"
-                          : "text-[var(--text-subtle)] hover:text-[var(--text-muted)]"
-                      }`}
+                {links.map((link, i) => {
+                  const isActive =
+                    link.href === "/work"
+                      ? pathname.startsWith("/work")
+                      : pathname === link.href;
+                  return (
+                    <motion.div
+                      key={link.href}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ delay: i * 0.1, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
                     >
-                      {link.label}
-                    </Link>
-                  </motion.div>
-                ))}
+                      <Link
+                        href={link.href}
+                        className={`block py-3 font-[family-name:var(--font-display)] text-[clamp(2rem,8vw,3.5rem)] font-bold leading-[1.1] tracking-tight transition-colors ${
+                          isActive
+                            ? "text-[var(--text)]"
+                            : "text-[var(--text-subtle)] hover:text-[var(--text-muted)]"
+                        }`}
+                      >
+                        {link.label}
+                      </Link>
+                    </motion.div>
+                  );
+                })}
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}

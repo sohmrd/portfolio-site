@@ -409,7 +409,7 @@ export function CaseStudyContent({
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <Link
-              href="/"
+              href="/work"
               className="group inline-flex items-center gap-2 text-sm text-[var(--text-muted)] transition-colors hover:text-[var(--accent)]"
             >
               <svg
@@ -496,7 +496,7 @@ export function CaseStudyContent({
           <div className="divider" />
           <div className="flex items-center justify-between py-16">
             <Link
-              href="/"
+              href="/work"
               className="group inline-flex items-center gap-3 font-[family-name:var(--font-display)] text-base font-semibold text-[var(--text)] transition-colors hover:text-[var(--accent)]"
             >
               <svg

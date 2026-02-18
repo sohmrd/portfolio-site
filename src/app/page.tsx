@@ -285,6 +285,26 @@ export default function Home() {
               <ProjectShowcase key={project.slug} project={project} index={i} />
             ))}
           </div>
+
+          <FadeUp>
+            <div className="mt-28 flex justify-center md:mt-36">
+              <Link
+                href="/work"
+                className="group inline-flex items-center gap-3 rounded-full border border-[var(--border-color)] px-8 py-4 font-[family-name:var(--font-display)] text-base font-semibold text-[var(--text)] transition-all hover:border-[var(--accent)]/50 hover:text-[var(--accent)]"
+              >
+                View all projects
+                <svg
+                  className="h-4 w-4 transition-transform group-hover:translate-x-1"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path d="M5 12h14m0 0l-7-7m7 7l-7 7" />
+                </svg>
+              </Link>
+            </div>
+          </FadeUp>
         </div>
       </section>
 

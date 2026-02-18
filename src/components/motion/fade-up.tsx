@@ -45,12 +45,18 @@ export function TextReveal({
   const [done, setDone] = useState(false);
 
   return (
-    <div className={`${done ? "" : "overflow-hidden"} ${className || ""}`}>
+    <div
+      className={className || ""}
+      style={done ? undefined : { clipPath: "inset(0 0 -20% 0)" }}
+    >
       <motion.div
-        initial={{ y: "100%" }}
-        whileInView={{ y: 0 }}
+        initial={{ y: "100%", opacity: 0 }}
+        whileInView={{ y: 0, opacity: 1 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.8, delay, ease: [0.77, 0, 0.175, 1] }}
+        transition={{
+          y: { duration: 0.8, delay, ease: [0.77, 0, 0.175, 1] },
+          opacity: { duration: 0.3, delay },
+        }}
         onAnimationComplete={() => setDone(true)}
       >
         {children}

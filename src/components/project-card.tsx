@@ -27,7 +27,7 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
         },
       }}
       whileHover={isComingSoon ? {} : { y: -4 }}
-      className={`group relative overflow-hidden rounded-xl border border-[var(--border-color)] bg-[var(--surface)] transition-colors ${
+      className={`group relative flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border-color)] bg-[var(--surface)] transition-colors ${
         isComingSoon ? "opacity-60" : "hover:border-[var(--accent)]/30"
       }`}
     >
@@ -73,11 +73,11 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
       </div>
 
       {/* Content */}
-      <div className="p-5">
+      <div className="flex flex-1 flex-col p-5">
         <h3 className="font-[family-name:var(--font-display)] text-lg font-semibold text-[var(--text)]">
           {project.title}
         </h3>
-        <p className="mt-1 text-sm leading-relaxed text-[var(--text-muted)]">
+        <p className="mt-1 flex-1 text-sm leading-relaxed text-[var(--text-muted)]">
           {project.description}
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
@@ -99,7 +99,7 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
   }
 
   return (
-    <Link href={`/work/${project.slug}`} className="block">
+    <Link href={`/work/${project.slug}`} className="block h-full">
       {card}
     </Link>
   );

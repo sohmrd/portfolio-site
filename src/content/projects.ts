@@ -565,6 +565,10 @@ export function getFeaturedProjects(): Project[] {
   return projects.filter((p) => p.featured);
 }
 
+export function getAllVisibleProjects(): Project[] {
+  return projects.filter((p) => p.visible);
+}
+
 export function getNextProject(slug: string): { slug: string; title: string } | null {
   const visible = projects.filter((p) => p.visible);
   const idx = visible.findIndex((p) => p.slug === slug);
