@@ -133,9 +133,10 @@ Product Designer, Mechanical CAD, Firmware Lead, iOS Developer. Content reflects
 - **LiDAR Garment Measurement** - Full case study with sections, code snippets, hero image
 - **Computer Vision Fashion Detection** - Full case study with YOLO pipeline details
 - **AliveCor Product Development** - Full case study with workspace photo hero
+- **Multi-Context N-Gram Prediction** - Full case study with context detection code, interface screenshots
+- **HP Product Design Internship** - Tier 3 case study with 25-slide presentation carousel, room render hero
 
 ### Placeholder (visible: false)
-- **HP Product Design Internship** - Needs content from presentation
 - **AI Square** - Needs all assets from external sources
 - Other Tier 2/3 projects awaiting processing
 
@@ -146,10 +147,25 @@ Product Designer, Mechanical CAD, Firmware Lead, iOS Developer. Content reflects
 - **TextReveal clipping descenders:** `overflow-hidden` clips descenders on large display text with tight line-height. Padding fix (`pb-[0.15em]`) failed because `em` is relative to wrapper font-size (16px), not the child heading (up to 112px). Fixed by replacing `overflow-hidden` with `clip-path: inset(0 0 -20% 0)` which extends the visible area 20% below for descenders. Clip-path is removed entirely after animation completes. Quick opacity fade (0.3s) masks the slight text peek at animation start.
 - **Code/screenshot height mismatch:** `items-start` on grid let columns be different heights. Fixed with `items-stretch` + `flex-1`.
 
+## HP Product Design Internship Case Study
+
+### Content Status: Complete (Tier 3)
+Three sections:
+
+1. **The Challenge** - COVID-era shift to remote work, HP brief for productivity tool, 15% target from research
+2. **The Design Process** - Three form factor iterations (desk-parallel, desk-as-screen, wall-mounted), tools (Miro, Figma, Illustrator, foam, Photoshop), remote constraints
+3. **The Outcome** - Positive reception from HP lead designers, user testing validation, lessons learned
+
+### Images
+| File | Content | Used In |
+|------|---------|---------|
+| `hero.jpg` | Wall-mounted device render in bedroom | Thumbnail, hero, Outcome section |
+| `slide-01.jpg` to `slide-25.jpg` | Full HP presentation (25 slides) | SlideViewer carousel in Challenge section |
+
+### Assets Source
+- All slides extracted from `HP Final Presentation.pdf` via `pdftoppm` at 200dpi
+
 ## Remaining Work
-- [ ] Process LiDAR Room Scanner project (need app screenshots)
-- [ ] Process CV-Clothing project (need inference results, training curves)
-- [ ] Process AliveCor project (need all assets from external sources)
 - [ ] Process Tier 2 projects (Interactive Products, Perception & Robotics, etc.)
-- [ ] Add real images for placeholder project thumbnails
+- [ ] Process remaining Tier 3 projects (AI Square, Marche Health, Cyara)
 - [ ] Consider adding React Three Fiber scenes for hero or project pages

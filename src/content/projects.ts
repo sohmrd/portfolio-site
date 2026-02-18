@@ -674,6 +674,72 @@ def train_fashion_model():
     featured: false,
     visible: true,
   },
+  {
+    slug: "hp-inc",
+    title: "HP Product Design Internship",
+    description:
+      "A wall-mounted home office device that schedules downtime and surfaces calendar reminders for remote workers.",
+    thumbnail: "/images/hp-inc/hero.jpg",
+    tags: ["Product Design", "Prototyping", "Figma", "UX Research"],
+    summary:
+      "During my internship at HP, I designed a physical device for the home office that connects to existing calendars and uses light and sound to remind users of deadlines while actively scheduling downtime to protect mental health. The project started right as COVID hit, shifting the entire internship remote.",
+    timeline: "2020",
+    role: "Product Design Intern",
+    duration: "3 months (Summer 2020)",
+    tools: ["Figma", "Adobe Illustrator", "Adobe Photoshop", "Miro", "Foam Prototyping"],
+    heroImage: "/images/hp-inc/hero.jpg",
+    sections: [
+      {
+        heading: "The Challenge",
+        type: "standard",
+        content:
+          "I started my HP internship right as COVID began. Overnight, every employee and student shifted to working and learning from home, and the fusion of living space and workspace created real problems: missed deadlines, no boundaries between work and rest, and declining mental health from never leaving the 'office.' HP tasked me with designing a product that helped remote workers manage this transition, specifically targeting a 15% productivity improvement based on internal research findings on remote work efficiency gaps.",
+        slides: [
+          "/images/hp-inc/slide-01.jpg",
+          "/images/hp-inc/slide-02.jpg",
+          "/images/hp-inc/slide-03.jpg",
+          "/images/hp-inc/slide-04.jpg",
+          "/images/hp-inc/slide-05.jpg",
+          "/images/hp-inc/slide-06.jpg",
+          "/images/hp-inc/slide-07.jpg",
+          "/images/hp-inc/slide-08.jpg",
+          "/images/hp-inc/slide-09.jpg",
+          "/images/hp-inc/slide-10.jpg",
+          "/images/hp-inc/slide-11.jpg",
+          "/images/hp-inc/slide-12.jpg",
+          "/images/hp-inc/slide-13.jpg",
+          "/images/hp-inc/slide-14.jpg",
+          "/images/hp-inc/slide-15.jpg",
+          "/images/hp-inc/slide-16.jpg",
+          "/images/hp-inc/slide-17.jpg",
+          "/images/hp-inc/slide-18.jpg",
+          "/images/hp-inc/slide-19.jpg",
+          "/images/hp-inc/slide-20.jpg",
+          "/images/hp-inc/slide-21.jpg",
+          "/images/hp-inc/slide-22.jpg",
+          "/images/hp-inc/slide-23.jpg",
+          "/images/hp-inc/slide-24.jpg",
+          "/images/hp-inc/slide-25.jpg",
+        ],
+      },
+      {
+        heading: "The Design Process",
+        type: "standard",
+        content:
+          "The concept went through three major form factors. The first sat parallel to the desk as a standalone display. The second, my most ambitious concept, converted the entire desk surface into a screen for reading documents, managing calendars, and scheduling. The final design was a wall-mounted device that connects to all existing calendars (Google, Outlook) and uses light and sound cues to remind users of due dates while proactively scheduling free time and breaks. I used Miro for brainstorming, Figma and Illustrator for wireframes and interface design, foam models for form factor exploration, and Photoshop for final product renders. The biggest constraint was designing a physical product entirely remotely, with no access to HP's prototyping lab, limited to online meetings and whatever tools I had at home.",
+      },
+      {
+        heading: "The Outcome",
+        type: "standard",
+        content:
+          "I presented the final wall-mounted concept to HP's full design team. The lead designers responded positively to both the product direction and the research backing it. User testing validated the 15% productivity target from the initial research. The project taught me how to run a full product design cycle, from research through prototyping to stakeholder presentation, under real constraints. Designing a physical product during COVID without access to a workshop or in-person collaboration forced me to find creative workarounds and communicate design intent more precisely through digital tools alone.",
+        images: ["/images/hp-inc/hero.jpg"],
+      },
+    ],
+    tier: 3,
+    featured: false,
+    visible: true,
+  },
 ];
 
 export function getProject(slug: string): Project | undefined {
