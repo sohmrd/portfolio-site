@@ -7,6 +7,7 @@ import Link from "next/link";
 import type { Project, Section } from "@/content/projects";
 import { FadeUp, TextReveal, ScaleIn } from "@/components/motion/fade-up";
 import { openLightbox, openLightboxGallery } from "@/components/ui/lightbox";
+import { SlideViewer } from "@/components/ui/slide-viewer";
 
 const BLUR_PLACEHOLDER =
   "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iaHNsKDIyMCwxNSUsOCUpIi8+PC9zdmc+";
@@ -354,6 +355,15 @@ function SectionRenderer({
       {/* ── Images (full container width, wider than text) ──────── */}
       {section.images && section.images.length > 0 && section.type !== "code" && (
         <SectionImages images={section.images} heading={section.heading} />
+      )}
+
+      {/* ── Slides (inline carousel) ──────────────────────────── */}
+      {section.slides && section.slides.length > 0 && (
+        <FadeUp delay={0.15}>
+          <div className="mx-auto mt-16 max-w-[var(--container-max)] px-6 lg:px-12">
+            <SlideViewer slides={section.slides} alt={section.heading} />
+          </div>
+        </FadeUp>
       )}
     </div>
   );

@@ -3,6 +3,7 @@ export interface Section {
   content: string;
   type?: "standard" | "stack" | "code" | "failure";
   images?: string[];
+  slides?: string[];
   // stack
   hardware?: string[];
   software?: string[];
@@ -575,6 +576,12 @@ def train_fashion_model():
         type: "standard",
         content:
           "I wanted to build a personalized typing assistant that goes beyond generic autocomplete. The core idea: people write differently depending on who they are talking to. A message to a friend uses different vocabulary than a Slack message to a coworker or a post about a hobby. I trained three separate trigram language models on personal, work, and hobby text data, then built a real-time context detection engine that scores incoming text against all three models and dynamically selects the best one for next-word prediction.",
+        slides: [
+          "/images/ngram-text-generation/slide-1.png",
+          "/images/ngram-text-generation/slide-2.png",
+          "/images/ngram-text-generation/slide-3.png",
+          "/images/ngram-text-generation/slide-4.png",
+        ],
       },
       {
         heading: "The Logic",
