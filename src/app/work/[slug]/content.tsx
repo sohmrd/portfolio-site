@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { motion, useScroll, useSpring } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
@@ -377,8 +378,17 @@ export function CaseStudyContent({
   project: Project;
   nextProject?: { slug: string; title: string } | null;
 }) {
+  const router = useRouter();
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+
+  const goBack = useCallback(() => {
+    if (window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/work");
+    }
+  }, [router]);
 
   return (
     <article>
@@ -418,8 +428,8 @@ export function CaseStudyContent({
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <Link
-              href="/work"
+            <button
+              onClick={goBack}
               className="group inline-flex items-center gap-2 text-sm text-[var(--text-muted)] transition-colors hover:text-[var(--accent)]"
             >
               <svg
@@ -432,7 +442,7 @@ export function CaseStudyContent({
                 <path d="M19 12H5m0 0l7 7m-7-7l7-7" />
               </svg>
               Back
-            </Link>
+            </button>
           </motion.div>
 
           <motion.div
@@ -532,8 +542,8 @@ export function CaseStudyContent({
         <div className="mx-auto max-w-[var(--container-max)]">
           <div className="divider" />
           <div className="flex items-center justify-between py-16">
-            <Link
-              href="/work"
+            <button
+              onClick={goBack}
               className="group inline-flex items-center gap-3 font-[family-name:var(--font-display)] text-base font-semibold text-[var(--text)] transition-colors hover:text-[var(--accent)]"
             >
               <svg
@@ -545,8 +555,8 @@ export function CaseStudyContent({
               >
                 <path d="M19 12H5m0 0l7 7m-7-7l7-7" />
               </svg>
-              All projects
-            </Link>
+              Back
+            </button>
 
             {nextProject && (
               <Link
