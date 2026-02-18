@@ -236,9 +236,9 @@ function SectionRenderer({
       {/* ── Code + screenshot side-by-side (full width) ────────── */}
       {section.type === "code" && section.code && section.images && section.images.length > 0 && (
         <div className="mx-auto mt-12 max-w-[var(--container-max)] px-6 lg:px-12">
-          <div className="grid items-stretch gap-6 lg:grid-cols-2">
-            <ScaleIn delay={0.15} className="flex">
-              <div className="flex flex-1 flex-col overflow-hidden rounded-2xl border border-[var(--code-border)] bg-[var(--code-bg)]">
+          <div className="grid items-stretch gap-6 overflow-hidden lg:grid-cols-2">
+            <ScaleIn delay={0.15} className="flex min-w-0">
+              <div className="flex min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-[var(--code-border)] bg-[var(--code-bg)]">
                 <div className="flex items-center justify-between border-b border-[var(--code-border)] px-6 py-3">
                   <div className="flex gap-2">
                     <div className="h-2.5 w-2.5 rounded-full bg-[var(--code-subtle)] opacity-50" />
@@ -252,7 +252,7 @@ function SectionRenderer({
                     </span>
                   </div>
                 </div>
-                <pre className="!m-0 !rounded-none !border-0 flex-1 overflow-x-auto overflow-y-auto p-6 md:p-8">
+                <pre className="!m-0 !rounded-none !border-0 min-w-0 flex-1 overflow-x-auto overflow-y-auto p-6 md:p-8">
                   <code className="text-[13px] leading-[1.8] text-[var(--code-text)]">
                     {section.code}
                   </code>
@@ -260,8 +260,8 @@ function SectionRenderer({
               </div>
             </ScaleIn>
 
-            <ScaleIn delay={0.25} className="flex">
-              <div className="flex flex-1 flex-col overflow-hidden rounded-2xl border border-[var(--border-color)] bg-[var(--surface)]">
+            <ScaleIn delay={0.25} className="flex min-w-0">
+              <div className="flex min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-[var(--border-color)] bg-[var(--surface)]">
                 <div className="relative flex flex-1 items-center justify-center p-6 md:p-8">
                   <div className="relative w-full">
                     <ClickableImage
@@ -296,7 +296,7 @@ function SectionRenderer({
                   </span>
                 </div>
               </div>
-              <pre className="!m-0 !rounded-none !border-0 overflow-x-auto p-6 md:p-8">
+              <pre className="!m-0 !rounded-none !border-0 min-w-0 overflow-x-auto p-6 md:p-8">
                 <code className="text-[13px] leading-[1.8] text-[var(--code-text)]">
                   {section.code}
                 </code>
