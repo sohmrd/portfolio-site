@@ -309,8 +309,8 @@ export default function Home() {
       </section>
 
       {/* About Preview — Asymmetric, editorial layout */}
-      <section id="about" className="scroll-mt-24 px-6 py-[clamp(5rem,10vh,12rem)] lg:px-12">
-        <div className="mx-auto max-w-[var(--container-max)]">
+      <section id="about" className="flex min-h-svh scroll-mt-24 flex-col justify-center px-6 py-[clamp(5rem,10vh,12rem)] lg:px-12">
+        <div className="mx-auto w-full max-w-[var(--container-max)]">
           <div className="grid gap-16 md:grid-cols-12 md:gap-8">
             {/* Left column — large heading */}
             <div className="md:col-span-5">
@@ -381,9 +381,9 @@ export default function Home() {
       </section>
 
       {/* Contact — Massive typography CTA */}
-      <section id="contact" className="relative scroll-mt-24 px-6 py-[clamp(5rem,10vh,12rem)] lg:px-12">
+      <section id="contact" className="relative flex min-h-[calc(100svh-10rem)] scroll-mt-24 flex-col justify-center px-6 py-[clamp(5rem,10vh,12rem)] lg:px-12">
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-[var(--accent)]/[0.02] to-transparent" />
-        <div className="relative mx-auto max-w-[var(--container-max)]">
+        <div className="relative mx-auto w-full max-w-[var(--container-max)]">
           <div className="divider" />
           <div className="py-[clamp(4rem,6vh,8rem)] text-center">
             <FadeUp>

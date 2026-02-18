@@ -14,7 +14,7 @@ This file provides guidance to Claude Code when working with this repository.
 
 ## Tech Stack
 
-- **Framework:** Next.js 14+ (App Router, TypeScript)
+- **Framework:** Next.js 16 (App Router, TypeScript)
 - **3D/WebGL:** React Three Fiber + @react-three/drei
 - **Animation:** GSAP + ScrollTrigger, Framer Motion
 - **Styling:** Tailwind CSS
@@ -53,8 +53,10 @@ portfolio/
 │       └── design-system/SKILL.md
 ├── src/
 │   ├── app/                 # Next.js App Router pages
-│   │   ├── page.tsx         # Home (hero, project grid, about, contact)
-│   │   ├── work/[slug]/page.tsx
+│   │   ├── page.tsx         # Home (hero, featured projects, about, contact)
+│   │   ├── work/page.tsx    # Work index (all projects, filter/sort)
+│   │   ├── work/work-content.tsx  # Work page client component
+│   │   ├── work/[slug]/page.tsx   # Case study pages
 │   │   ├── about/page.tsx
 │   │   └── layout.tsx
 │   ├── components/
