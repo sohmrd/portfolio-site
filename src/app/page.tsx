@@ -261,7 +261,7 @@ export default function Home() {
       </section>
 
       {/* Work — Large showcase cards */}
-      <section id="work" className="scroll-mt-24 px-6 pb-40 pt-24 lg:px-12 lg:pb-60 lg:pt-36">
+      <section id="work" className="scroll-mt-24 px-6 pb-[clamp(5rem,8vh,10rem)] pt-[clamp(5rem,8vh,9rem)] lg:px-12">
         <div className="mx-auto max-w-[var(--container-max)]">
           <FadeUp>
             <div className="flex items-end justify-between">
@@ -280,14 +280,14 @@ export default function Home() {
             <div className="divider mt-8" />
           </FadeUp>
 
-          <div className="mt-20 space-y-28 md:mt-24 md:space-y-40">
+          <div className="mt-[clamp(4rem,5vh,6rem)] space-y-[clamp(5rem,8vh,10rem)]">
             {projects.map((project, i) => (
               <ProjectShowcase key={project.slug} project={project} index={i} />
             ))}
           </div>
 
           <FadeUp>
-            <div className="mt-28 flex justify-center md:mt-36">
+            <div className="mt-[clamp(4rem,6vh,8rem)] flex justify-center">
               <Link
                 href="/work"
                 className="group inline-flex items-center gap-3 rounded-full border border-[var(--border-color)] px-8 py-4 font-[family-name:var(--font-display)] text-base font-semibold text-[var(--text)] transition-all hover:border-[var(--accent)]/50 hover:text-[var(--accent)]"
@@ -309,7 +309,7 @@ export default function Home() {
       </section>
 
       {/* About Preview — Asymmetric, editorial layout */}
-      <section id="about" className="scroll-mt-24 px-6 py-40 lg:px-12 lg:py-56">
+      <section id="about" className="scroll-mt-24 px-6 py-[clamp(5rem,10vh,12rem)] lg:px-12">
         <div className="mx-auto max-w-[var(--container-max)]">
           <div className="grid gap-16 md:grid-cols-12 md:gap-8">
             {/* Left column — large heading */}
@@ -381,11 +381,11 @@ export default function Home() {
       </section>
 
       {/* Contact — Massive typography CTA */}
-      <section id="contact" className="relative scroll-mt-24 px-6 py-40 lg:px-12 lg:py-56">
+      <section id="contact" className="relative scroll-mt-24 px-6 py-[clamp(5rem,10vh,12rem)] lg:px-12">
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-[var(--accent)]/[0.02] to-transparent" />
         <div className="relative mx-auto max-w-[var(--container-max)]">
           <div className="divider" />
-          <div className="py-28 text-center md:py-36">
+          <div className="py-[clamp(4rem,6vh,8rem)] text-center">
             <FadeUp>
               <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-[var(--text-subtle)]">
                 Get in touch
