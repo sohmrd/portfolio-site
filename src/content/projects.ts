@@ -473,7 +473,7 @@ def train_fashion_model():
     title: "AliveCor Product Development",
     description:
       "Audited and redesigned the clinical configuration system for an AI-driven remote heart monitoring platform.",
-    thumbnail: "/images/alivecor/hero.jpg",
+    thumbnail: "/images/alivecor/workspace.jpg",
     tags: ["Product Strategy", "Medical AI", "UX Design", "Figma", "Cross-functional"],
     summary:
       "As Featured Intern at AliveCor, I mapped every setting interaction in the clinical platform through systematic testing, discovered hidden dependencies across the system, and designed self-service configuration flows that reduced setup complexity for clinical users.",
@@ -481,7 +481,7 @@ def train_fashion_model():
     role: "Product Development Intern (Featured Intern)",
     duration: "3 months (Summer 2024)",
     tools: ["Figma", "Jira", "Confluence", "Arduino", "Premiere Pro", "Google Suite"],
-    heroImage: "/images/alivecor/hero.jpg",
+    heroImage: "/images/alivecor/workspace.jpg",
     sections: [
       {
         heading: "The Challenge",
