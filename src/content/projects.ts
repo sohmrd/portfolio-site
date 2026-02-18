@@ -198,8 +198,8 @@ int pumpSpeed(long intensity) {
         heading: "The Result",
         type: "standard",
         content:
-          "We demonstrated a fully working prototype to Coca-Cola engineers at the Georgia Tech Interdisciplinary Capstone Expo. The Omni Bottle mixes up to four flavors with individually adjustable intensity (over 16 possible combinations), controlled through the iOS app or automatically via tilt-to-dispense. The main water reservoir stays clean at all times, and flavor cartridges are simple to swap and refill. We delivered a complete technical binder, fabrication package, bill of materials, and the branded expo poster shown in the hero image.",
-        images: ["/images/ddv/team.jpg"],
+          "We demonstrated a fully working prototype to Coca-Cola engineers at the Georgia Tech Interdisciplinary Capstone Expo. The Omni Bottle mixes up to four flavors with individually adjustable intensity (over 16 possible combinations), controlled through the iOS app or automatically via tilt-to-dispense. The main water reservoir stays clean at all times, and flavor cartridges are simple to swap and refill. We delivered a complete technical binder, fabrication package, bill of materials, and the branded expo poster shown below.",
+        images: ["/images/ddv/team.jpg", "/images/ddv/poster.jpg"],
       },
     ],
     tier: 1,
