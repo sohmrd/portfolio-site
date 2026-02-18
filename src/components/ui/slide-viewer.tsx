@@ -127,6 +127,7 @@ export function SlideViewer({ slides, alt = "Slide" }: SlideViewerProps) {
     []
   );
 
+  /* Keyboard navigation */
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -145,6 +146,49 @@ export function SlideViewer({ slides, alt = "Slide" }: SlideViewerProps) {
     return () => el.removeEventListener("keydown", handleKey);
   }, [paginate]);
 
+  /* Preload all slide images */
+  useEffect(() => {
+    slides.forEach((src) => {
+      const img = new window.Image();
+      img.src = src;
+    });
+  }, [slides]);
+
+  /* Touch swipe handling */
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
+  const swiping = useRef(false);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    swiping.current = false;
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!touchStart.current) return;
+    const dx = e.touches[0].clientX - touchStart.current.x;
+    const dy = e.touches[0].clientY - touchStart.current.y;
+    // Lock to horizontal swipe once threshold met
+    if (!swiping.current && Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      swiping.current = true;
+    }
+    if (swiping.current) {
+      e.preventDefault();
+    }
+  }, []);
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      if (!touchStart.current) return;
+      const dx = e.changedTouches[0].clientX - touchStart.current.x;
+      if (swiping.current && Math.abs(dx) > 40) {
+        paginate(dx < 0 ? 1 : -1);
+      }
+      touchStart.current = null;
+      swiping.current = false;
+    },
+    [paginate]
+  );
+
   if (slides.length === 0) return null;
 
   return (
@@ -155,7 +199,12 @@ export function SlideViewer({ slides, alt = "Slide" }: SlideViewerProps) {
         className="group relative rounded-2xl border border-[var(--border-color)] bg-[var(--surface)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
       >
         {/* Slide area */}
-        <div className="relative aspect-[16/9] overflow-hidden">
+        <div
+          className="relative aspect-[16/9] overflow-hidden touch-pan-y"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           <AnimatePresence initial={false} custom={direction} mode="popLayout">
             <motion.div
               key={current}
@@ -174,9 +223,25 @@ export function SlideViewer({ slides, alt = "Slide" }: SlideViewerProps) {
                 sizes="(max-width: 1024px) 100vw, 1440px"
                 placeholder="blur"
                 blurDataURL={BLUR_PLACEHOLDER}
+                priority
               />
             </motion.div>
           </AnimatePresence>
+
+          {/* Hidden preload for adjacent slides */}
+          {slides.map((src, i) =>
+            i !== current ? (
+              <Image
+                key={src}
+                src={src}
+                alt=""
+                fill
+                className="pointer-events-none invisible absolute"
+                sizes="(max-width: 1024px) 100vw, 1440px"
+                aria-hidden
+              />
+            ) : null
+          )}
         </div>
 
         {/* Prev / Next arrows */}
